@@ -21,6 +21,14 @@ import { isValidHandle, normalizeHandle } from "@/lib/handles";
 
 const X_LOGO = "𝕏";
 
+// Design-export assets (Google-hosted). Kept as-is so the mascot/logo match the mock.
+const TUMA_LOGO =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAHKFAw6gP2hPCPlYlG-OiYf1s-vtwFoDVAE4USKcbYw9IPXI75vF_K2wETttty3I8Q-ZjW8DJp7zoqLNexaU0JohbgNoexla5ezYm5o3ltNd8CRt6ZePoBeBDd1-YoIOgqAL6R31vTbY93OxYDKiaR3gJPWElzx2trPg80UtRrOAscXkXZfKYBmtdT77b5Oh-2VBq_u-ywodPGYnBj7b0CxkGhYhcfBOVE1PYe5TFB2hk1AHUCOYcf";
+const TUMI_WAVING =
+  "https://lh3.googleusercontent.com/aida/AEtjO1U3YQh5ndXkf4Wj1tPP45eaRpfGGi349UfItqd0mVCUwmYhDfDydveF-_iU0ZcbT3vSyaW6UYeohqPtYZ7bPzQw6k7DI5nTfEY4cs71JWZfLtk4drQQ4AG1A-p3LYbwuXYPb-mKOtEJFZ7oXejsdtcEXWQE-mYGADWe3P9uFR2Dm5snoYUSYP41cavc8AaDrSSNyBWK1L9o_HqTYQ6dnuwaf1VgIWmU_QzNz-rFXayAw0fGdcwIEOpP46k";
+const TUMI_CURIOUS =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAO6MRTVk9_ndYahkuIoKZrtADuxZdDG4Wo614dET1jFfC9iV8ySJgcVQFmC_iBz0UpqXTy6AE-FVYNLT9TLRjBGlGXI5FiiUlyQe26ZsOiNadiKjt_LaXK3YtIV7SKeZuJldjiQ9CCdFDqR0VUVgNtbxPj1nirONPQC_MCB0lHgOHy0PZqndN3mbCXpNJo1bVjb8GxgAzOisDutr_6UlAutra8gTi-UBgb7yrIBj3-VSWjfqJG1Q5k";
+
 type RateResponse = {
   base: string;
   rates: Record<string, number>;
@@ -224,12 +232,11 @@ export function HomeDashboard() {
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="flex flex-col px-space-md">
-          <div className="flex items-center gap-space-sm px-space-sm mb-space-xl">
-            <span className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold">
-              T
-            </span>
-            <span className="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span>
-          </div>
+            <div className="flex items-center gap-space-sm px-space-sm mb-space-xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img alt="Tuma Logo" className="h-8 w-auto object-contain" src={TUMA_LOGO} />
+              <span className="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span>
+            </div>
           <nav className="flex flex-col gap-space-xs">
             <Link
               href="/dashboard"
@@ -336,7 +343,8 @@ export function HomeDashboard() {
               </div>
               <div className="inline-flex items-center gap-space-sm bg-surface-container-lowest py-space-xs px-space-md rounded-full shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] self-start md:self-auto">
                 <div className="relative w-11 h-11 rounded-full bg-secondary-fixed flex items-center justify-center overflow-hidden">
-                  <span className="material-symbols-outlined text-secondary">smart_toy</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img alt="Tumi Mascot" className="w-full h-full object-cover" src={TUMI_WAVING} />
                   <span className="absolute bottom-0 right-0 w-3 h-3 bg-secondary-container rounded-full ring-2 ring-surface-container-lowest"></span>
                 </div>
                 <div className="flex flex-col pr-space-xs">
@@ -623,8 +631,9 @@ export function HomeDashboard() {
                 {/* Tumi insight */}
                 <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.03)] relative overflow-hidden">
                   <div className="flex items-start gap-space-sm">
-                    <div className="w-12 h-12 rounded-full bg-secondary-fixed shrink-0 flex items-center justify-center text-secondary">
-                      <span className="material-symbols-outlined">smart_toy</span>
+                    <div className="w-12 h-12 rounded-full bg-secondary-fixed shrink-0 flex items-center justify-center text-secondary overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img alt="Tumi Mascot Helper" className="w-full h-full object-cover" src={TUMI_WAVING} />
                     </div>
                     <div className="flex flex-col">
                       <div className="flex items-center gap-1">
@@ -867,8 +876,9 @@ export function HomeDashboard() {
       >
         <div className="flex items-center justify-between pb-space-xs">
           <div className="flex items-center gap-space-xs">
-            <span className="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary shrink-0">
-              <span className="material-symbols-outlined text-[18px]">smart_toy</span>
+            <span className="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary shrink-0 overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img alt="Tumi Chat" className="w-full h-full object-cover" src={TUMI_WAVING} />
             </span>
             <div className="flex flex-col">
               <span className="font-label-md text-label-md text-on-surface font-bold">Ask Tumi</span>
@@ -925,9 +935,14 @@ function ActivityEmpty({
   return (
     <div className="relative overflow-hidden bg-surface-container-lowest rounded-xl p-space-xl flex flex-col items-center justify-center text-center shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)]">
       <div className="absolute inset-0 bg-gradient-to-b from-surface-container-low/50 via-transparent to-transparent pointer-events-none"></div>
-      <div className="relative z-10 w-32 h-32 mb-space-md flex items-center justify-center">
+      <div className="relative z-10 w-40 h-40 mb-space-md flex items-center justify-center">
         <div className="absolute inset-2 rounded-full bg-secondary-fixed/30 blur-xl"></div>
-        <span className="material-symbols-outlined text-[96px] text-secondary">savings</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          alt="Tumi the mascot looking curious and ready to assist"
+          className="relative z-10 w-full h-full object-contain drop-shadow-md"
+          src={TUMI_CURIOUS}
+        />
       </div>
       <div className="relative z-10 max-w-md flex flex-col items-center gap-space-xs mb-space-lg">
         <h3 className="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">{title}</h3>
