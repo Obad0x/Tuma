@@ -19,6 +19,13 @@ export const TumaEscrowABI = [
   },
   {
     type: "function",
+    name: "owner",
+    stateMutability: "view",
+    inputs: [],
+    outputs: [{ type: "address" }],
+  },
+  {
+    type: "function",
     name: "usdc",
     stateMutability: "view",
     inputs: [],

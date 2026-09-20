@@ -13,6 +13,7 @@ export type PaymentView = {
   id: string;
   sender: `0x${string}`;
   amount: string;
+  amountRaw: string;
   handle: string;
   expiry: number;
   expiryLabel: string;
@@ -39,6 +40,7 @@ export async function getPayment(id: string): Promise<PaymentView | null> {
     id,
     sender,
     amount: formatUnits(amount, USDC_DECIMALS),
+    amountRaw: amount.toString(),
     handle,
     expiry: expirySeconds,
     expiryLabel: new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(

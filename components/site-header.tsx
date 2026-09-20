@@ -16,6 +16,9 @@ export function SiteHeader() {
             <Link href="/payments" className="hover:text-zinc-900 dark:hover:text-zinc-100">
               Payments
             </Link>
+            <Link href="/admin" className="hover:text-zinc-900 dark:hover:text-zinc-100">
+              Admin
+            </Link>
           </nav>
         </div>
         <ConnectButton />

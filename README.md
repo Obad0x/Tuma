@@ -49,16 +49,27 @@ app/                    Next.js routes
   page.tsx              /            Send
   claim/[id]/page.tsx   /claim/[id]  Claim
   payments/page.tsx     /payments    Sender history + refund
+  admin/page.tsx        /admin       Protocol dashboard + operator tools
   api/claim/route.ts    POST /api/claim  (operator release)
   api/auth/[...nextauth]/route.ts
-components/             Client UI (send form, claim panel, payments list, wallet button)
-lib/                    arc chain config, ABIs, chain reads, event queries, helpers
+components/             Client UI (send form, claim panel, payments list, admin, wallet button)
+lib/                    arc chain config, ABIs, chain reads, event/admin queries, helpers
 auth.ts                 Auth.js config (X username + id into the session)
 types/                  next-auth type augmentation
 contracts/              Hardhat project (contract, tests, deploy script)
 docs/SETUP.md           Step-by-step setup (X developer app, env, wallets)
 docs/DEMO.md            90-second demo script + judge talking points
 ```
+
+Wallets: injected wallets via EIP-6963, an explicit **Zerion** target, and WalletConnect
+(set `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`) for mobile — including Zerion mobile.
+
+## Admin
+
+`/admin` shows protocol stats, contract addresses, and every payment with search, status
+filters and CSV export. Write actions are wallet-gated on-chain: **set operator** requires
+the contract owner, **force release** requires the operator. Read-only data is public chain
+data, so the page is safe to leave in the build.
 
 ## Quickstart
 

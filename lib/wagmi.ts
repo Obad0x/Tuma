@@ -1,12 +1,32 @@
-import { createConfig, http } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { createConfig, http, type CreateConnectorFn } from "wagmi";
+import { injected, walletConnect } from "wagmi/connectors";
 import { arc } from "./arc";
 
-/// wagmi config for the browser. `ssr: true` avoids hydration mismatches in
-/// the Next.js App Router. NEXT_PUBLIC_ARC_RPC is an optional RPC override.
+const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+
+/// Injected wallets (MetaMask, Rabby, ...) plus an explicit Zerion target so it
+/// shows up as its own option. WalletConnect is enabled when a project id is set,
+/// which is how Zerion mobile connects.
+const connectors: CreateConnectorFn[] = [injected(), injected({ target: "zerion" })];
+
+if (walletConnectProjectId) {
+  connectors.push(
+    walletConnect({
+      projectId: walletConnectProjectId,
+      showQrModal: true,
+      metadata: {
+        name: "Tuma",
+        description: "Send USDC to an X handle. They claim it with one login.",
+        url: "https://tuma.app",
+        icons: [],
+      },
+    }),
+  );
+}
+
 export const wagmiConfig = createConfig({
   chains: [arc],
-  connectors: [injected()],
+  connectors,
   transports: {
     [arc.id]: http(process.env.NEXT_PUBLIC_ARC_RPC),
   },
