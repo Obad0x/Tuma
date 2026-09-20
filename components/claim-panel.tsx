@@ -4,7 +4,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import { isAddress } from "viem";
 import { useAccount, useSwitchChain } from "wagmi";
-import { ARC_EXPLORER, USDC_ADDRESS, arcTestnet } from "@/lib/arc";
+import { ARC_EXPLORER, USDC_ADDRESS, arc } from "@/lib/arc";
 import type { PaymentView } from "@/lib/chain";
 import { shortAddress } from "@/lib/format";
 import { ConnectButton } from "./connect-button";
@@ -133,7 +133,7 @@ export function ClaimPanel({
             View transaction on ArcScan
           </a>
           <p className="text-xs text-zinc-500">
-            To see the balance, add <strong>Arc Testnet</strong> (chain id 5042002) to your wallet and
+            To see the balance, add <strong>Arc</strong> (chain id 5042) to your wallet and
             import the USDC token at <span className="font-mono">{USDC_ADDRESS}</span>.
           </p>
         </div>
@@ -200,13 +200,13 @@ export function ClaimPanel({
 
           <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
             <ConnectButton />
-            {isConnected && chainId !== arcTestnet.id ? (
+            {isConnected && chainId !== arc.id ? (
               <button
-                onClick={() => switchChain({ chainId: arcTestnet.id })}
+                onClick={() => switchChain({ chainId: arc.id })}
                 disabled={switching}
                 className="font-medium underline"
               >
-                {switching ? "Switching…" : "Switch to Arc Testnet"}
+                {switching ? "Switching…" : "Switch to Arc"}
               </button>
             ) : null}
             {isConnected && address ? (

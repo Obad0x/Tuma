@@ -2,7 +2,7 @@
 
 **Send USDC to an [@handle](https://x.com) on X. They claim it with one login.**
 
-Tuma lets you send testnet USDC to someone's X (Twitter) handle even if they have never
+Tuma lets you send USDC to someone's X (Twitter) handle even if they have never
 used a wallet. The money sits in an on-chain escrow. The recipient opens a claim link,
 signs in with X, pastes a wallet address, and the server releases the USDC to them —
 paying the gas. If nobody claims within 30 days, the sender can refund.
@@ -28,10 +28,10 @@ No database. The contract is the source of truth.
 
 | Network      | TumaEscrow | Deploy block |
 | ------------ | ---------- | ------------ |
-| Arc Testnet  | _not deployed yet_ | |
-| Chain id     | `5042002` | |
+| Arc Mainnet  | _not deployed yet_ | |
+| Chain id     | `5042` | |
 | USDC (ERC-20)| `0x3600000000000000000000000000000000000000` (6 decimals) | |
-| Explorer     | https://testnet.arcscan.app | |
+| Explorer     | https://explorer.arc.io | |
 
 After running the deploy script, record the address and block here (not in `.env`).
 
@@ -56,7 +56,7 @@ lib/                    arc chain config, ABIs, chain reads, event queries, help
 auth.ts                 Auth.js config (X username + id into the session)
 types/                  next-auth type augmentation
 contracts/              Hardhat project (contract, tests, deploy script)
-docs/SETUP.md           Step-by-step setup (X developer app, env, faucet)
+docs/SETUP.md           Step-by-step setup (X developer app, env, wallets)
 docs/DEMO.md            90-second demo script + judge talking points
 ```
 
@@ -74,7 +74,7 @@ cp contracts/.env.example contracts/.env
 # See docs/SETUP.md for the X developer app callback URL:
 #   http://localhost:3000/api/auth/callback/twitter
 
-# 3. Deploy the escrow to Arc Testnet
+# 3. Deploy the escrow to Arc Mainnet
 cd contracts && npm run deploy:arc
 # Copy the printed NEXT_PUBLIC_ESCROW_ADDRESS / NEXT_PUBLIC_ESCROW_DEPLOY_BLOCK into .env.local
 
@@ -82,8 +82,8 @@ cd contracts && npm run deploy:arc
 npm run dev
 ```
 
-Fund the deployer and operator wallets with test USDC from https://faucet.circle.com
-(choose Arc Testnet). USDC is gas on Arc, so the operator needs a balance.
+Tuma runs on **Arc Mainnet**, so the deployer and operator wallets need a little real
+USDC for gas (USDC is gas on Arc). Keep amounts small.
 
 ### Environment variables
 

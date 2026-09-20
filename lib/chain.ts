@@ -1,12 +1,12 @@
 import { createPublicClient, http } from "viem";
 import { TumaEscrowABI } from "./abi";
-import { ESCROW_ADDRESS, USDC_DECIMALS, arcTestnet } from "./arc";
+import { ESCROW_ADDRESS, USDC_DECIMALS, arc } from "./arc";
 import { formatUnits } from "./format";
 
-/// Server-side read-only client for Arc Testnet.
+/// Server-side read-only client for Arc Mainnet.
 export const arcPublicClient = createPublicClient({
-  chain: arcTestnet,
-  transport: http(),
+  chain: arc,
+  transport: http(process.env.NEXT_PUBLIC_ARC_RPC),
 });
 
 export type PaymentView = {

@@ -48,16 +48,18 @@ Fill in:
 
 ## 4. Fund the wallets
 
-- Go to https://faucet.circle.com, pick **Arc Testnet**, then **USDC**.
-- Send test USDC to both the deployer and operator wallet addresses.
-- USDC is Arc's native gas token, so the operator needs a balance to pay for `release()`.
+- Tuma runs on **Arc Mainnet**, so this uses real USDC. Send a small amount.
+- Send USDC on Arc to both the deployer and operator wallet addresses.
+- USDC is Arc's native gas token, so the operator needs a balance to pay for `release()`
+  and the deployer needs a little to deploy the contract.
 
 ## 5. Contract env values
 
 `NEXT_PUBLIC_ARC_RPC` and `NEXT_PUBLIC_USDC_ADDRESS` already default to the values below:
 
-- RPC: `https://rpc.testnet.arc.network`
+- RPC: `https://rpc.mainnet.arc.io`
 - USDC ERC-20: `0x3600000000000000000000000000000000000000` (6 decimals)
-- Explorer: https://testnet.arcscan.app
+- Explorer: https://explorer.arc.io
 
-`NEXT_PUBLIC_ESCROW_ADDRESS` and `NEXT_PUBLIC_ESCROW_DEPLOY_BLOCK` are filled in after the Stage 2 deployment.
+`NEXT_PUBLIC_ESCROW_ADDRESS` and `NEXT_PUBLIC_ESCROW_DEPLOY_BLOCK` are filled in after the
+Stage 2 deployment.

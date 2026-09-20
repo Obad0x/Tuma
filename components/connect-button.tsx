@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
-import { arcTestnet } from "@/lib/arc";
+import { arc } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
 import { shortAddress } from "@/lib/format";
 
@@ -45,10 +45,10 @@ export function ConnectButton() {
     );
   }
 
-  if (chainId !== arcTestnet.id) {
+  if (chainId !== arc.id) {
     return (
       <button
-        onClick={() => switchChain({ chainId: arcTestnet.id })}
+        onClick={() => switchChain({ chainId: arc.id })}
         disabled={switching}
         className={`${base} bg-amber-500 text-white hover:bg-amber-600`}
       >

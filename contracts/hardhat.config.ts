@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY ?? "";
-const ARC_RPC = process.env.ARC_RPC ?? "https://rpc.testnet.arc.network";
+const ARC_RPC = process.env.ARC_RPC ?? "https://rpc.mainnet.arc.io";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -18,9 +18,9 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 31337,
     },
-    arcTestnet: {
+    arc: {
       url: ARC_RPC,
-      chainId: 5042002,
+      chainId: 5042,
       accounts: DEPLOYER_PRIVATE_KEY ? [DEPLOYER_PRIVATE_KEY] : [],
     },
   },

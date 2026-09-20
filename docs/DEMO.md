@@ -2,20 +2,20 @@
 
 ## 90-second demo
 
-Pre-setup (do this before you present): operator + deployer wallets funded with test USDC,
+Pre-setup (do this before you present): operator + deployer wallets funded with USDC,
 `.env.local` filled in, two X accounts ready (a "sender" and a real "recipient"), and the
 recipient's wallet address copied to the clipboard.
 
 | Time | Do | Say |
 | ---- | -- | ---- |
 | 0:00 | Show the landing page | "Tuma sends USDC to an X handle. The recipient doesn't even need a wallet — they claim it with one login." |
-| 0:08 | Connect wallet → auto-prompts switch to Arc Testnet | "We're on Arc Testnet. USDC is the gas token here." |
-| 0:16 | Click **Get test USDC**, grab faucet funds | "Sender grabs testnet USDC from Circle's faucet." |
+| 0:08 | Connect wallet → auto-prompts switch to Arc | "We're on Arc Mainnet. USDC is the gas token here." |
+| 0:16 | Check the sender USDC balance | "Wallet is funded with USDC on Arc." |
 | 0:24 | Type the recipient's real `@handle`, enter `25`, click **Approve USDC**, then **Send USDC** | "Approve, then send. Two steps, one contract." |
 | 0:40 | Show the claim link + click **Copy**, then **Share on X** to show the prefilled post | "Here's the claim link, and a ready-made post tagging them." |
 | 0:52 | Open the link in a private window → **Sign in with X** as the recipient | "The recipient opens it, signs in with X." |
 | 1:05 | Paste a wallet address, click **Claim USDC** | "The server verifies the X account matches the handle and releases the funds — paying the gas." |
-| 1:18 | Show the ArcScan transaction link | "Settled on Arc. They had no wallet and paid no gas." |
+| 1:18 | Show the Arc Explorer transaction link | "Settled on Arc. They had no wallet and paid no gas." |
 | 1:26 | Switch to `/payments`, point at the status + **Refund** | "The sender tracks everything here and can refund anything unclaimed after 30 days." |
 | 1:32 | Close | "Send money to an @handle. They claim it with one login." |
 
@@ -58,4 +58,4 @@ git push -u origin demo-stable --tags
 ```
 
 Record the deployed escrow address and block in `README.md` (own commit:
-`docs: record Arc testnet deployment`).
+`docs: record Arc mainnet deployment`).

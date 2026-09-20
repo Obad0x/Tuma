@@ -16,7 +16,7 @@ import {
   ESCROW_ADDRESS,
   USDC_ADDRESS,
   USDC_DECIMALS,
-  arcTestnet,
+  arc,
   isEscrowConfigured,
 } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
@@ -51,7 +51,7 @@ export function SendForm() {
 
   const normalized = normalizeHandle(handle);
   const handleValid = isValidHandle(normalized);
-  const onArc = chainId === arcTestnet.id;
+  const onArc = chainId === arc.id;
 
   const { data: balance } = useBalance({
     address,
@@ -211,13 +211,13 @@ export function SendForm() {
         </p>
       ) : !onArc ? (
         <div className="space-y-3 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 dark:bg-amber-950 dark:text-amber-200">
-          <p>You are on the wrong network. Tuma runs on Arc Testnet.</p>
+          <p>You are on the wrong network. Tuma runs on Arc.</p>
           <button
-            onClick={() => switchChain({ chainId: arcTestnet.id })}
+            onClick={() => switchChain({ chainId: arc.id })}
             disabled={switching}
             className={secondary}
           >
-            {switching ? "Switching…" : "Switch to Arc Testnet"}
+            {switching ? "Switching…" : "Switch to Arc"}
           </button>
         </div>
       ) : null}
@@ -266,14 +266,7 @@ export function SendForm() {
         </div>
         <div className="flex items-center justify-between text-xs">
           <span className="text-zinc-500">Balance: {balanceText} USDC</span>
-          <a
-            href="https://faucet.circle.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium underline"
-          >
-            Get test USDC
-          </a>
+          <span className="text-zinc-400">USDC on Arc</span>
         </div>
         {amountError ? <p className="text-xs text-red-600 dark:text-red-400">{amountError}</p> : null}
       </div>
@@ -312,7 +305,7 @@ export function SendForm() {
       {error ? <p className="text-sm text-red-600 dark:text-red-400">{error}</p> : null}
 
       <p className="text-center text-[11px] text-zinc-400">
-        Transactions settle on Arc Testnet ·{" "}
+        Transactions settle on Arc ·{" "}
         <a href={ARC_EXPLORER} target="_blank" rel="noopener noreferrer" className="underline">
           ArcScan
         </a>

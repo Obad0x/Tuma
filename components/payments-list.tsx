@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useAccount, usePublicClient, useSwitchChain, useWriteContract } from "wagmi";
 import { TumaEscrowABI } from "@/lib/abi";
-import { ARC_EXPLORER, ESCROW_ADDRESS, ESCROW_DEPLOY_BLOCK, arcTestnet } from "@/lib/arc";
+import { ARC_EXPLORER, ESCROW_ADDRESS, ESCROW_DEPLOY_BLOCK, arc } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
 import { fetchSenderPayments, type SenderPayment } from "@/lib/events";
 import { ConnectButton } from "./connect-button";
@@ -39,7 +39,7 @@ export function PaymentsList() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const enabled = !!publicClient && !!address && chainId === arcTestnet.id;
+  const enabled = !!publicClient && !!address && chainId === arc.id;
   const { data: payments, isLoading, error, refetch } = useQuery({
     queryKey: ["sender-payments", address, chainId],
     queryFn: () => fetchSenderPayments(publicClient!, address!),
@@ -89,18 +89,18 @@ export function PaymentsList() {
     );
   }
 
-  if (chainId !== arcTestnet.id) {
+  if (chainId !== arc.id) {
     return (
       <div className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Switch to Arc Testnet to see your payments.
+          Switch to Arc to see your payments.
         </p>
         <button
-          onClick={() => switchChain({ chainId: arcTestnet.id })}
+          onClick={() => switchChain({ chainId: arc.id })}
           disabled={switching}
           className={primary}
         >
-          {switching ? "Switching…" : "Switch to Arc Testnet"}
+          {switching ? "Switching…" : "Switch to Arc"}
         </button>
       </div>
     );

@@ -10,14 +10,17 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { auth } from "@/auth";
 import { TumaEscrowABI } from "@/lib/abi";
-import { ESCROW_ADDRESS, arcTestnet, isEscrowConfigured } from "@/lib/arc";
+import { ESCROW_ADDRESS, arc, isEscrowConfigured } from "@/lib/arc";
 import { getPayment } from "@/lib/chain";
 
 export const runtime = "nodejs";
 
 const OPERATOR_PRIVATE_KEY = process.env.OPERATOR_PRIVATE_KEY as `0x${string}` | undefined;
 
-const publicClient = createPublicClient({ chain: arcTestnet, transport: http() });
+const publicClient = createPublicClient({
+  chain: arc,
+  transport: http(process.env.NEXT_PUBLIC_ARC_RPC),
+});
 
 /// Prevents a double-click from sending two release transactions for the same id.
 const inFlight = new Set<string>();
@@ -105,7 +108,11 @@ export async function POST(request: Request) {
 
   try {
     const account = privateKeyToAccount(OPERATOR_PRIVATE_KEY);
-    const wallet = createWalletClient({ account, chain: arcTestnet, transport: http() });
+    const wallet = createWalletClient({
+      account,
+      chain: arc,
+      transport: http(process.env.NEXT_PUBLIC_ARC_RPC),
+    });
 
     const hash = await wallet.writeContract({
       address: ESCROW_ADDRESS,

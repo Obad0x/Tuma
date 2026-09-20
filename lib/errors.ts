@@ -12,7 +12,7 @@ export function friendlyError(error: unknown): string {
       return "Not enough USDC to cover the amount and gas.";
     }
     if (/chain .*not.*(added|configured)|unrecognized chain/i.test(msg)) {
-      return "Arc Testnet is not in your wallet yet. Approve adding it, then try again.";
+      return "Arc is not in your wallet yet. Approve adding it, then try again.";
     }
     if (e.shortMessage) return e.shortMessage;
     if (e.message) return e.message;
