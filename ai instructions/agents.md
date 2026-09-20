@@ -10,16 +10,17 @@ HOW IT WORKS
 4. The server checks that the signed-in X username matches the handle on the payment. If it matches, a trusted operator wallet on the server releases the USDC to the recipient's address and pays the gas, so the recipient needs no gas and no prior setup.
 5. If nobody claims within 30 days, the sender can refund themselves.
 
-ARC TESTNET FACTS (use exactly these)
-- Chain ID: 5042002
-- RPC: https://rpc.testnet.arc.network (fallbacks: https://rpc.blockdaemon.testnet.arc.network, https://rpc.drpc.testnet.arc.network)
-- Explorer: https://testnet.arcscan.app
-- Faucet: https://faucet.circle.com (choose Arc Testnet, then USDC)
+ARC MAINNET FACTS (use exactly these)
+- Chain ID: 5042
+- RPC: https://rpc.mainnet.arc.io (fallbacks: https://rpc.blockdaemon.mainnet.arc.io, https://rpc.drpc.mainnet.arc.io, https://rpc.quicknode.mainnet.arc.io)
+- Explorer: https://explorer.arc.io
+- No faucet. This is mainnet, so USDC is real money. Keep demo amounts small.
 - Arc is EVM-compatible, so Solidity, Hardhat, viem and wagmi all work.
 - USDC is Arc's native gas token.
 - USDC ERC-20 interface address: 0x3600000000000000000000000000000000000000 (6 decimals)
 - DECIMALS TRAP: native USDC (gas) uses 18 decimals, the ERC-20 interface uses 6. For anything the user sees or sends, use only the ERC-20 interface with 6 decimals. Never send payments as native value.
-- If unsure about any Arc-specific detail, say so and tell me to check docs.arc.network. Do not invent addresses, APIs or package names.
+- viem ships Arc as a built-in chain: import { arc } from "viem/chains" (do not hand-roll the chain unless you need an RPC override).
+- If unsure about any Arc-specific detail, say so and tell me to check docs.arc.io. Do not invent addresses, APIs or package names.
 
 SMART CONTRACT: TumaEscrow (Solidity ^0.8.24, Hardhat, OpenZeppelin)
 - constructor(address usdc, address operator). Owner can change the operator (Ownable).
@@ -30,11 +31,11 @@ SMART CONTRACT: TumaEscrow (Solidity ^0.8.24, Hardhat, OpenZeppelin)
 - Events: Deposited(uint256 indexed id, address indexed sender, string handle, uint256 amount, uint64 expiry), Released(uint256 indexed id, address to), Refunded(uint256 indexed id).
 - Use ReentrancyGuard and checks-effects-interactions.
 - Hardhat tests covering: deposit, invalid handle, release only by operator, double release fails, release after refund fails, refund before expiry fails, refund after expiry works, refund by non-sender fails.
-- Deploy script for Arc Testnet reading DEPLOYER_PRIVATE_KEY and OPERATOR_ADDRESS from .env; print the contract address and deploy block number.
+- Deploy script for Arc Mainnet reading DEPLOYER_PRIVATE_KEY and OPERATOR_ADDRESS from .env; print the contract address and deploy block number.
 
 STACK
 - Next.js (App Router) + TypeScript + Tailwind, one project for frontend and backend.
-- wagmi v2 + viem for wallets and chain reads. Define Arc Testnet with viem's defineChain (native currency name "USDC", symbol "USDC", decimals 18, plus RPC and explorer).
+- wagmi v2 + viem for wallets and chain reads. Use viem's built-in Arc Mainnet chain (import { arc } from "viem/chains"; native currency name "USDC", symbol "USDC", decimals 18, plus RPC and explorer) with an optional NEXT_PUBLIC_ARC_RPC override.
 - Auth.js (next-auth v5) with the Twitter/X provider using OAuth 2.0 (scopes: users.read tweet.read). JWT sessions, no database. In the callbacks, put the X username (lowercased) and X user id into the session.
 - No database at all: the contract is the source of truth.
 
@@ -47,11 +48,11 @@ BACKEND: POST /api/claim  { id, recipient }
 - Friendly errors for every failure.
 
 FRONTEND PAGES
-1. / (Send): connect wallet (injected) with a prompt to add/switch to Arc Testnet. Handle input (strip "@", lowercase, validate). Amount input. Show the user's USDC balance and a "Get test USDC" faucet link. Two clear steps: "Approve USDC" then "Send". After success, read the Deposited event to get the id, then show the claim link with Copy and "Share on X" (use https://x.com/intent/post?text=...&url=...). Show a warning before sending: "Only the X account @handle can claim this. Double-check the spelling. If unclaimed after 30 days you can refund it."
+1. / (Send): connect wallet (injected) with a prompt to add/switch to Arc. Handle input (strip "@", lowercase, validate). Amount input. Show the user's USDC balance (no faucet — this is mainnet, so USDC is real). Two clear steps: "Approve USDC" then "Send". After success, read the Deposited event to get the id, then show the claim link with Copy and "Share on X" (use https://x.com/intent/post?text=...&url=...). Show a warning before sending: "Only the X account @handle can claim this. Double-check the spelling. If unclaimed after 30 days you can refund it."
 2. /claim/[id]: read the payment from chain and show: amount, sender (shortened), recipient @handle, and status. Then:
    - Not signed in: "Sign in with X" button.
    - Signed in as the wrong account: explain and offer to sign out.
-   - Signed in as the right account: field to paste a wallet address (or connect a wallet), then a "Claim" button. On success show the ArcScan link and a short note on how to see USDC in their wallet on Arc Testnet.
+   - Signed in as the right account: field to paste a wallet address (or connect a wallet), then a "Claim" button. On success show the Arc Explorer link and a short note on how to see USDC in their wallet on Arc.
    - Already claimed, refunded or expired: show that state clearly.
 3. /payments: the sender's payments (read Deposited events filtered by sender, from the deploy block, in chunks to respect RPC limits). Show handle, amount, status, a copy-link button, and a Refund button when it is Open and expired.
 
@@ -100,6 +101,6 @@ GIT WORKFLOW (follow this for every stage)
     git switch main
     git branch -D experiment/<name>
 - If I hit a bug after merging, tell me how to go back with git revert or by switching to the last tag. Do not use "git reset --hard" unless I ask.
-- After deploying the contract, commit the deployed address and deploy block in the README (not in .env) on its own commit: "docs: record Arc testnet deployment".
+- After deploying the contract, commit the deployed address and deploy block in the README (not in .env) on its own commit: "docs: record Arc mainnet deployment".
 - Give me the commands to create a GitHub repo, add the remote, and push main and all tags (git remote add origin <url>, git push -u origin main, git push --tags), then "git push -u origin <branch>" for feature branches.
 - Before the hackathon submission, tell me to create a stable branch: git switch -c demo-stable, tag it "v1.0-submission", and push it, so the judged version can't be changed by accident.
