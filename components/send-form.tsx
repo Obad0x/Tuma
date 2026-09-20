@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { parseEventLogs, parseUnits } from "viem";
 import {
@@ -37,9 +38,11 @@ export function SendForm() {
   const { switchChain, isPending: switching } = useSwitchChain();
   const publicClient = usePublicClient();
   const { writeContractAsync } = useWriteContract();
+  const searchParams = useSearchParams();
 
-  const [handle, setHandle] = useState("");
-  const [amount, setAmount] = useState("");
+  // Prefill from a request link (/send?handle=...&amount=...).
+  const [handle, setHandle] = useState(() => searchParams.get("handle") ?? "");
+  const [amount, setAmount] = useState(() => searchParams.get("amount") ?? "");
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [claim, setClaim] = useState<{ handle: string; id: string; amount: string } | null>(null);

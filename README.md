@@ -47,13 +47,15 @@ After running the deploy script, record the address and block here (not in `.env
 ```
 app/                    Next.js routes
   page.tsx              /            Marketing landing page
-  (app)/send/page.tsx   /send        Send
+  dashboard/page.tsx    /dashboard   Wallet, live rates, activity
+  (app)/send/page.tsx   /send        Send (supports ?handle=&amount= prefill)
   (app)/claim/[id]/...  /claim/[id]  Claim
   (app)/payments/...    /payments    Sender history + refund
   (app)/admin/page.tsx  /admin       Protocol dashboard + operator tools
   api/claim/route.ts    POST /api/claim  (operator release)
+  api/rates/route.ts    GET  /api/rates  (free USD FX rates)
   api/auth/[...nextauth]/route.ts
-components/             Client UI (landing, send form, claim panel, payments list, admin, wallet button)
+components/             Client UI (landing, dashboard, send form, claim panel, payments list, admin, wallet button)
 lib/                    arc chain config, ABIs, chain reads, event/admin queries, helpers
 auth.ts                 Auth.js config (X username + id into the session)
 types/                  next-auth type augmentation

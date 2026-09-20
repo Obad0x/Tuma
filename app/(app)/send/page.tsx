@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { SendForm } from "@/components/send-form";
 
 export default function Home() {
@@ -9,7 +10,9 @@ export default function Home() {
           They claim it with one login — no wallet needed until then.
         </p>
       </div>
-      <SendForm />
+      <Suspense fallback={null}>
+        <SendForm />
+      </Suspense>
     </main>
   );
 }

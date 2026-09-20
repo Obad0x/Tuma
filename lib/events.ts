@@ -73,3 +73,77 @@ export async function fetchSenderPayments(
 
   return payments.sort((a, b) => Number(BigInt(b.id) - BigInt(a.id)));
 }
+
+/// Settlement durations (seconds) for the sender's claimed payments, measured
+/// from the deposit block timestamp to the release block timestamp.
+export async function fetchSettlementDurations(
+  client: PublicClient,
+  sender: `0x${string}`,
+): Promise<number[]> {
+  const latest = await client.getBlockNumber();
+  const depositBlocks = new Map<string, bigint>();
+  const releaseBlocks = new Map<string, bigint>();
+
+  let from = ESCROW_DEPLOY_BLOCK;
+  let chunks = 0;
+  while (from <= latest && chunks < MAX_CHUNKS) {
+    const to = from + CHUNK - 1n > latest ? latest : from + CHUNK - 1n;
+
+    const [deposits, releases] = await Promise.all([
+      client.getContractEvents({
+        address: ESCROW_ADDRESS,
+        abi: TumaEscrowABI,
+        eventName: "Deposited",
+        args: { sender },
+        fromBlock: from,
+        toBlock: to,
+      }),
+      client.getContractEvents({
+        address: ESCROW_ADDRESS,
+        abi: TumaEscrowABI,
+        eventName: "Released",
+        fromBlock: from,
+        toBlock: to,
+      }),
+    ]);
+
+    for (const event of deposits) {
+      if (event.args.id !== undefined && event.blockNumber != null) {
+        depositBlocks.set(event.args.id.toString(), event.blockNumber);
+      }
+    }
+    for (const event of releases) {
+      if (event.args.id !== undefined && event.blockNumber != null) {
+        releaseBlocks.set(event.args.id.toString(), event.blockNumber);
+      }
+    }
+
+    from = to + 1n;
+    chunks++;
+  }
+
+  const timestamps = new Map<string, bigint>();
+  const blockNumbers = new Set<string>();
+  for (const [, block] of depositBlocks) blockNumbers.add(block.toString());
+  for (const [, block] of releaseBlocks) blockNumbers.add(block.toString());
+
+  await Promise.all(
+    [...blockNumbers].map(async (blockNumber) => {
+      const block = await client.getBlock({ blockNumber: BigInt(blockNumber) });
+      timestamps.set(blockNumber, block.timestamp);
+    }),
+  );
+
+  const durations: number[] = [];
+  for (const [id, depositBlock] of depositBlocks) {
+    const releaseBlock = releaseBlocks.get(id);
+    if (releaseBlock === undefined) continue;
+    const start = timestamps.get(depositBlock.toString());
+    const end = timestamps.get(releaseBlock.toString());
+    if (start === undefined || end === undefined) continue;
+    const seconds = Number(end - start);
+    if (seconds >= 0) durations.push(seconds);
+  }
+
+  return durations;
+}
