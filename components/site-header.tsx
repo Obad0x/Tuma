@@ -10,7 +10,7 @@ export function SiteHeader() {
             Tuma
           </Link>
           <nav className="flex items-center gap-4 text-sm text-zinc-600 dark:text-zinc-400">
-            <Link href="/" className="hover:text-zinc-900 dark:hover:text-zinc-100">
+            <Link href="/send" className="hover:text-zinc-900 dark:hover:text-zinc-100">
               Send
             </Link>
             <Link href="/payments" className="hover:text-zinc-900 dark:hover:text-zinc-100">

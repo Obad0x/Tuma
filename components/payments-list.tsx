@@ -117,7 +117,7 @@ export function PaymentsList() {
       ) : !payments || payments.length === 0 ? (
         <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
           No payments yet. Send one from the{" "}
-          <Link href="/" className="font-medium underline">
+          <Link href="/send" className="font-medium underline">
             Send page
           </Link>
           .

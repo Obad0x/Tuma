@@ -1,8 +1,134 @@
 @import "tailwindcss";
 
+/* Design tokens for the Tuma landing page (ported from the Tailwind config). */
+@theme {
+  /* Brand palette */
+  --color-on-surface: #1d1b19;
+  --color-surface-container-highest: #e7e1de;
+  --color-tertiary-container: #8f82ff;
+  --color-on-secondary-fixed: #251a00;
+  --color-secondary: #785a00;
+  --color-secondary-container: #fec736;
+  --color-error-container: #ffdad6;
+  --color-on-primary: #ffffff;
+  --color-on-tertiary-container: #240092;
+  --color-secondary-fixed: #ffdf9a;
+  --color-surface-variant: #e7e1de;
+  --color-on-secondary-container: #705400;
+  --color-primary-fixed-dim: #ffb4a3;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-primary-fixed-variant: #8c1900;
+  --color-on-tertiary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-surface: #fff8f4;
+  --color-on-primary-container: #5a0c00;
+  --color-surface-dim: #dfd9d5;
+  --color-secondary-fixed-dim: #f5bf2d;
+  --color-tertiary-fixed: #e4dfff;
+  --color-primary: #b52603;
+  --color-error: #ba1a1a;
+  --color-outline-variant: #e3beb6;
+  --color-on-error: #ffffff;
+  --color-inverse-primary: #ffb4a3;
+  --color-on-error-container: #93000a;
+  --color-tertiary: #5847d2;
+  --color-inverse-on-surface: #f6efec;
+  --color-primary-container: #ff5a36;
+  --color-on-tertiary-fixed-variant: #4029ba;
+  --color-on-tertiary-fixed: #160066;
+  --color-on-surface-variant: #5b403a;
+  --color-outline: #8f7069;
+  --color-surface-container: #f3ede9;
+  --color-on-secondary-fixed-variant: #5a4300;
+  --color-on-primary-fixed: #3d0600;
+  --color-on-background: #1d1b19;
+  --color-surface-container-low: #f9f2ee;
+  --color-tertiary-fixed-dim: #c6bfff;
+  --color-surface-bright: #fff8f4;
+  --color-surface-tint: #b52603;
+  --color-background: #fff8f4;
+  --color-inverse-surface: #32302e;
+  --color-surface-container-high: #ede7e3;
+  --color-primary-fixed: #ffdad2;
+
+  /* Radius scale used by the landing markup */
+  --radius: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+  --radius-full: 9999px;
+
+  /* Named spacing scale */
+  --spacing-gutter: 1rem;
+  --spacing-gutter-tablet: 1.5rem;
+  --spacing-gutter-desktop: 2rem;
+  --spacing-margin: 1rem;
+  --spacing-margin-tablet: 2rem;
+  --spacing-margin-desktop: 3rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+
+  /* Typography is wired to the next/font variable below. */
+
+  --text-display-hero: 48px;
+  --text-display-hero--line-height: 56px;
+  --text-display-hero--letter-spacing: -0.03em;
+  --text-display-hero--font-weight: 800;
+  --text-display-hero-mobile: 36px;
+  --text-display-hero-mobile--line-height: 44px;
+  --text-display-hero-mobile--letter-spacing: -0.02em;
+  --text-display-hero-mobile--font-weight: 800;
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: -0.02em;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-lg-mobile: 26px;
+  --text-headline-lg-mobile--line-height: 34px;
+  --text-headline-lg-mobile--letter-spacing: -0.02em;
+  --text-headline-lg-mobile--font-weight: 700;
+  --text-headline-md: 22px;
+  --text-headline-md--line-height: 30px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 700;
+  --text-headline-sm: 18px;
+  --text-headline-sm--line-height: 26px;
+  --text-headline-sm--font-weight: 600;
+  --text-body-lg: 17px;
+  --text-body-lg--line-height: 26px;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 15px;
+  --text-body-md--line-height: 22px;
+  --text-body-md--font-weight: 400;
+  --text-body-sm: 13px;
+  --text-body-sm--line-height: 18px;
+  --text-body-sm--font-weight: 500;
+  --text-label-lg: 14px;
+  --text-label-lg--line-height: 20px;
+  --text-label-lg--letter-spacing: 0.01em;
+  --text-label-lg--font-weight: 700;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.02em;
+  --text-label-md--font-weight: 600;
+  --text-label-sm: 11px;
+  --text-label-sm--line-height: 14px;
+  --text-label-sm--letter-spacing: 0.04em;
+  --text-label-sm--font-weight: 700;
+  --text-currency-display: 44px;
+  --text-currency-display--line-height: 52px;
+  --text-currency-display--letter-spacing: -0.03em;
+  --text-currency-display--font-weight: 800;
+  --text-currency-display-mobile: 32px;
+  --text-currency-display-mobile--line-height: 40px;
+  --text-currency-display-mobile--letter-spacing: -0.02em;
+  --text-currency-display-mobile--font-weight: 800;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fff8f4;
+  --foreground: #1d1b19;
 }
 
 @theme inline {
@@ -10,17 +136,31 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Landing typography — resolved against the next/font CSS variable. */
+  --font-body-sm: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-body-md: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-body-lg: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-label-sm: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-label-md: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-label-lg: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-headline-sm: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-headline-md: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-headline-lg: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-headline-lg-mobile: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display-hero: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-display-hero-mobile: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-currency-display: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-currency-display-mobile: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
+  overscroll-behavior: none;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
