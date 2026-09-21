@@ -268,9 +268,8 @@ export function SendExperience() {
       <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="flex flex-col px-space-md">
           <div className="flex items-center gap-space-sm px-space-sm mb-space-xl">
-            <span className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold">
-              T
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img alt="Tuma" className="h-8 w-8 rounded-lg object-cover" src="/images/tuma-logo.jpg" />
             <span className="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span>
           </div>
           <nav className="flex flex-col gap-space-xs">

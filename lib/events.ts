@@ -20,6 +20,14 @@ const CHUNK = 10_000n;
 const MAX_CHUNKS = 200;
 const CLAIM_PERIOD_SECONDS = 30 * 24 * 60 * 60;
 
+/// When the deploy block is unknown (0), only scan a recent window instead of
+/// walking from genesis — that is what makes the first load crawl.
+const UNKNOWN_WINDOW = 50_000n;
+function scanStart(latest: bigint): bigint {
+  if (ESCROW_DEPLOY_BLOCK > 0n) return ESCROW_DEPLOY_BLOCK;
+  return latest > UNKNOWN_WINDOW ? latest - UNKNOWN_WINDOW : 0n;
+}
+
 export async function fetchSenderPayments(
   client: PublicClient,
   sender: `0x${string}`,
@@ -28,7 +36,7 @@ export async function fetchSenderPayments(
   const deposits: { id: bigint; handle: string; amount: bigint; expiry: bigint; block: bigint }[] =
     [];
 
-  let from = ESCROW_DEPLOY_BLOCK;
+  let from = scanStart(latest);
   let chunks = 0;
   while (from <= latest && chunks < MAX_CHUNKS) {
     const to = from + CHUNK - 1n > latest ? latest : from + CHUNK - 1n;
@@ -67,36 +75,47 @@ export async function fetchSenderPayments(
   );
 
   const now = Math.floor(Date.now() / 1000);
-  const payments = await Promise.all(
-    deposits.map(async (deposit) => {
-      const [, , , , status] = await client.readContract({
+
+  // One batched call for all statuses instead of N individual reads.
+  const statuses = await client
+    .multicall({
+      contracts: deposits.map((deposit) => ({
         address: ESCROW_ADDRESS,
         abi: TumaEscrowABI,
         functionName: "payments",
         args: [deposit.id],
-      });
-      const expirySeconds = Number(deposit.expiry);
-      const createdBlock = blockTimestamps.get(deposit.block.toString());
-      const createdSeconds =
-        createdBlock !== undefined ? Number(createdBlock) : expirySeconds - CLAIM_PERIOD_SECONDS;
-      return {
-        id: deposit.id.toString(),
-        handle: deposit.handle,
-        amount: formatUnits(deposit.amount, USDC_DECIMALS),
-        createdAt: createdSeconds,
-        createdLabel: new Intl.DateTimeFormat("en-US", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        }).format(new Date(createdSeconds * 1000)),
-        expiry: expirySeconds,
-        expiryLabel: new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
-          new Date(expirySeconds * 1000),
-        ),
-        expired: status === 0 && now > expirySeconds,
-        status: Number(status),
-      } satisfies SenderPayment;
-    }),
-  );
+      })),
+      allowFailure: true,
+    })
+    .catch(() => []);
+
+  const payments = deposits.map((deposit, index) => {
+    const result = statuses[index];
+    const status =
+      result && result.status === "success"
+        ? Number((result.result as unknown as readonly [string, bigint, string, bigint, number])[4])
+        : 0;
+    const expirySeconds = Number(deposit.expiry);
+    const createdBlock = blockTimestamps.get(deposit.block.toString());
+    const createdSeconds =
+      createdBlock !== undefined ? Number(createdBlock) : expirySeconds - CLAIM_PERIOD_SECONDS;
+    return {
+      id: deposit.id.toString(),
+      handle: deposit.handle,
+      amount: formatUnits(deposit.amount, USDC_DECIMALS),
+      createdAt: createdSeconds,
+      createdLabel: new Intl.DateTimeFormat("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(createdSeconds * 1000)),
+      expiry: expirySeconds,
+      expiryLabel: new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
+        new Date(expirySeconds * 1000),
+      ),
+      expired: status === 0 && now > expirySeconds,
+      status,
+    } satisfies SenderPayment;
+  });
 
   return payments.sort((a, b) => Number(BigInt(b.id) - BigInt(a.id)));
 }
@@ -111,7 +130,7 @@ export async function fetchSettlementSpeeds(
   const depositBlocks = new Map<string, bigint>();
   const releaseBlocks = new Map<string, bigint>();
 
-  let from = ESCROW_DEPLOY_BLOCK;
+  let from = scanStart(latest);
   let chunks = 0;
   while (from <= latest && chunks < MAX_CHUNKS) {
     const to = from + CHUNK - 1n > latest ? latest : from + CHUNK - 1n;

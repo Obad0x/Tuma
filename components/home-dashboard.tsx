@@ -20,13 +20,10 @@ import { isValidHandle, normalizeHandle } from "@/lib/handles";
 
 const X_LOGO = "𝕏";
 
-// Design-export assets (Google-hosted). Kept as-is so the mascot/logo match the mock.
-const TUMA_LOGO =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAHKFAw6gP2hPCPlYlG-OiYf1s-vtwFoDVAE4USKcbYw9IPXI75vF_K2wETttty3I8Q-ZjW8DJp7zoqLNexaU0JohbgNoexla5ezYm5o3ltNd8CRt6ZePoBeBDd1-YoIOgqAL6R31vTbY93OxYDKiaR3gJPWElzx2trPg80UtRrOAscXkXZfKYBmtdT77b5Oh-2VBq_u-ywodPGYnBj7b0CxkGhYhcfBOVE1PYe5TFB2hk1AHUCOYcf";
-const TUMI_WAVING =
-  "https://lh3.googleusercontent.com/aida/AEtjO1U3YQh5ndXkf4Wj1tPP45eaRpfGGi349UfItqd0mVCUwmYhDfDydveF-_iU0ZcbT3vSyaW6UYeohqPtYZ7bPzQw6k7DI5nTfEY4cs71JWZfLtk4drQQ4AG1A-p3LYbwuXYPb-mKOtEJFZ7oXejsdtcEXWQE-mYGADWe3P9uFR2Dm5snoYUSYP41cavc8AaDrSSNyBWK1L9o_HqTYQ6dnuwaf1VgIWmU_QzNz-rFXayAw0fGdcwIEOpP46k";
-const TUMI_CURIOUS =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAO6MRTVk9_ndYahkuIoKZrtADuxZdDG4Wo614dET1jFfC9iV8ySJgcVQFmC_iBz0UpqXTy6AE-FVYNLT9TLRjBGlGXI5FiiUlyQe26ZsOiNadiKjt_LaXK3YtIV7SKeZuJldjiQ9CCdFDqR0VUVgNtbxPj1nirONPQC_MCB0lHgOHy0PZqndN3mbCXpNJo1bVjb8GxgAzOisDutr_6UlAutra8gTi-UBgb7yrIBj3-VSWjfqJG1Q5k";
+// Self-hosted design assets (downloaded from the export) for fast, reliable loads.
+const TUMA_LOGO = "/images/tuma-logo.jpg";
+const TUMI_WAVING = "/images/tumi-waving.jpg";
+const TUMI_CURIOUS = "/images/tumi-curious.jpg";
 
 type RateResponse = {
   base: string;

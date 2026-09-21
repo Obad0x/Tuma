@@ -26,8 +26,7 @@ import {
 
 const X_LOGO = "𝕏";
 const CURRENCIES = ["NGN", "KES", "GHS", "ZAR", "USD", "EUR", "GBP", "INR"];
-const TUMI_MASCOT =
-  "https://lh3.googleusercontent.com/aida/AEtjO1U3YQh5ndXkf4Wj1tPP45eaRpfGGi349UfItqd0mVCUwmYhDfDydveF-_iU0ZcbT3vSyaW6UYeohqPtYZ7bPzQw6k7DI5nTfEY4cs71JWZfLtk4drQQ4AG1A-p3LYbwuXYPb-mKOtEJFZ7oXejsdtcEXWQE-mYGADWe3P9uFR2Dm5snoYUSYP41cavc8AaDrSSNyBWK1L9o_HqTYQ6dnuwaf1VgIWmU_QzNz-rFXayAw0fGdcwIEOpP46k";
+const TUMI_MASCOT = "/images/tumi-waving.jpg";
 
 function initials(value: string): string {
   return value.replace(/[^a-z0-9]/gi, "").slice(0, 2).toUpperCase() || "TU";
@@ -132,7 +131,8 @@ export function ProfileView() {
       <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="flex flex-col px-space-md">
           <div className="flex items-center gap-space-sm px-space-sm mb-space-xl">
-            <span className="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary font-bold">T</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img alt="Tuma" className="h-8 w-8 rounded-lg object-cover" src="/images/tuma-logo.jpg" />
             <span className="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span>
           </div>
           <nav className="flex flex-col gap-space-xs">

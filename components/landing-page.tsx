@@ -5,7 +5,7 @@
  * Copy is written around the real product: send USDC to an X handle on Arc,
  * held in escrow, claimed with one login. Tailwind scans this file.
  */
-const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(26,24,22,0.03)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="flex items-center gap-space-sm focus:outline-none" data-path="home" href="/"><img alt="Tuma logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UjW-hIKHp4cglZ6Qxj78SZC32ep87HnSRcK2CAhLdEP0KHK6pGMRHSF4LKjkCC2B9AX4-1lKZWxz1vOm0oY3wmwoAXDLqAo6M8qVydDGc0hYw6BNTcFxuR1d5RncXvMeLUSv8YSaHPMczY9GbtIyikQlPt9gQ5RKnUXNqp4us-237BmepRAr1pu5nJZQxwnjytxinh8R0kuGoeQ_Mk37jThfIYsNfFRxub0KF1pXJlWooXIijBnmuzMfk"><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">Tuma</span></a><nav class="hidden lg:flex items-center gap-space-lg"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">How it works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Product</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Security</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center justify-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-full transition-colors" href="/dashboard">Open app</a><a class="inline-flex items-center justify-center font-label-lg text-label-lg text-on-primary bg-primary-container hover:bg-primary shadow-[0_4px_0_#b52603] active:translate-y-[2px] active:shadow-[0_2px_0_#b52603] px-space-lg py-space-sm rounded-full transition-all" href="/send">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1"><div class="flex flex-col w-full">
+const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(26,24,22,0.03)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="flex items-center gap-space-sm focus:outline-none" data-path="home" href="/"><img alt="Tuma logo" class="h-8 w-auto object-contain" src="/images/tuma-logo.jpg"><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">Tuma</span></a><nav class="hidden lg:flex items-center gap-space-lg"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">How it works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Product</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Security</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center justify-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-full transition-colors" href="/dashboard">Open app</a><a class="inline-flex items-center justify-center font-label-lg text-label-lg text-on-primary bg-primary-container hover:bg-primary shadow-[0_4px_0_#b52603] active:translate-y-[2px] active:shadow-[0_2px_0_#b52603] px-space-lg py-space-sm rounded-full transition-all" href="/send">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1"><div class="flex flex-col w-full">
 <!-- Top Ambient Glow Field -->
 <div class="relative w-full overflow-hidden">
 <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[780px] h-[520px] bg-gradient-to-b from-primary-fixed/40 via-secondary-fixed/20 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
@@ -43,7 +43,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <!-- Proof Markers -->
 <div class="pt-6 flex flex-wrap items-center gap-6 text-on-surface-variant">
 <div class="flex -space-x-2 overflow-hidden">
-<img alt="A Tuma sender" class="inline-block h-10 w-10 rounded-full ring-2 ring-surface object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1VbMg8hpxaAVqAwmA9tgrJSj9jlFRuUXSAz91kr72ujXBTwj001AxPEHGeP8KUN0bITPuIVCAt8Objp7Oas2rDyT4o1QRfktSct_59bUFnMt9UiMAAJkWMmjDMnVoWdERurnmYe0u29bUvMs_0OjZcHe0ie_Xus8tOxQtb_2KltBXTFKKDQFoHRuZdTEQBb61e2mYMM1_odOtwExKEM9r0EC-NkE2LQtMBYoH_n2lPMiQnd-4GPsybxcw">
+<img alt="A Tuma sender" class="inline-block h-10 w-10 rounded-full ring-2 ring-surface object-cover" src="/images/avatar.jpg">
 <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm ring-2 ring-surface font-bold">MK</div>
 <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm ring-2 ring-surface font-bold">OD</div>
 <div class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm ring-2 ring-surface font-bold">𝕏</div>
@@ -67,11 +67,11 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="w-full max-w-md aspect-square bg-gradient-to-tr from-secondary-container/30 via-primary-container/20 to-tertiary-container/30 rounded-3xl p-6 relative flex items-center justify-center shadow-xl">
 <!-- Center Tumi Mascot Visual -->
 <div class="relative z-10 flex flex-col items-center">
-<img alt="Tumi the friendly mascot delivering a USDC payment to an X handle" class="w-72 h-72 sm:w-84 sm:h-84 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChjSTZqlL_mJk2QFOJgtfU6DlLleV-tSqzhDy9AgFqc0PhbENfl8K8CY0zSk3ruw0O25nTxE2vCloA0Yg6o4xB3Pri86old-8hDRDvFIp2K87QHizA_9tGY0O-eFxdLA9eHAL0FlOShMpfYqcEU_Elv3KqDX-MW_XT3t_LPUyPeWMY80t2q7CkTCbkhoQV9AYYYPzK5oXSB42nk6QoeoMbrv3c1L0mo3sBjzwtOjN21lHdx7O1iFiu">
+<img alt="Tumi the friendly mascot delivering a USDC payment to an X handle" class="w-72 h-72 sm:w-84 sm:h-84 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-300" src="/images/tumi-hero.jpg">
 </div>
 <!-- Floating Pill 1: Claim Notification -->
 <div class="absolute -top-4 -left-4 sm:-left-8 z-20 bg-surface-container-lowest p-3.5 pr-5 rounded-2xl shadow-[0_12px_28px_-6px_rgba(26,24,22,0.12)] flex items-center gap-3 animate-bounce" style="animation-duration: 4s;">
-<img alt="A Tuma recipient" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1VbMg8hpxaAVqAwmA9tgrJSj9jlFRuUXSAz91kr72ujXBTwj001AxPEHGeP8KUN0bITPuIVCAt8Objp7Oas2rDyT4o1QRfktSct_59bUFnMt9UiMAAJkWMmjDMnVoWdERurnmYe0u29bUvMs_0OjZcHe0ie_Xus8tOxQtb_2KltBXTFKKDQFoHRuZdTEQBb61e2mYMM1_odOtwExKEM9r0EC-NkE2LQtMBYoH_n2lPMiQnd-4GPsybxcw">
+<img alt="A Tuma recipient" class="w-10 h-10 rounded-full object-cover" src="/images/avatar.jpg">
 <div class="flex flex-col">
 <span class="font-label-sm text-label-sm text-on-surface-variant">Claimed with one login</span>
 <div class="flex items-center gap-1.5">
@@ -232,7 +232,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <!-- Connected Mascot Horizontal Strip -->
 <div class="mt-14 w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
 <div class="flex items-center gap-5">
-<img alt="Tumi the mascot in three poses: checking live rates, holding a USDC coin, and flying with a claim link" class="h-20 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjHVvinwnZ-G9FRPmKbZxOBm_4Vvsl5rLnxdfncfgm3v-PkL6f7gHQBT7eziRgU1f-giJ5WdbTxaydNwUEeku1vkcKuhvn59jahxgCsCLz1vjV5zfHKnfxWo_HUQn0zC_sb8qMixhIndyT-C4O7llL4yq3ZV_-glYNApEGbxjKyqUwdQKQmIEuESCOr35USIGNZAJbUgQUtKHUVR44iArIExcuOTJExwMLpgiwxfP0IgcHqAB4Lez8">
+<img alt="Tumi the mascot in three poses: checking live rates, holding a USDC coin, and flying with a claim link" class="h-20 w-auto object-contain" src="/images/tumi-poses.jpg">
 <div>
 <h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Meet Tumi, your transfer companion</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-lg">
@@ -282,7 +282,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
                 Verified via 𝕏
               </span>
 </div>
-<img alt="Your Tuma profile" class="w-10 h-10 rounded-full object-cover shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1VbMg8hpxaAVqAwmA9tgrJSj9jlFRuUXSAz91kr72ujXBTwj001AxPEHGeP8KUN0bITPuIVCAt8Objp7Oas2rDyT4o1QRfktSct_59bUFnMt9UiMAAJkWMmjDMnVoWdERurnmYe0u29bUvMs_0OjZcHe0ie_Xus8tOxQtb_2KltBXTFKKDQFoHRuZdTEQBb61e2mYMM1_odOtwExKEM9r0EC-NkE2LQtMBYoH_n2lPMiQnd-4GPsybxcw">
+<img alt="Your Tuma profile" class="w-10 h-10 rounded-full object-cover shadow-sm" src="/images/avatar.jpg">
 </div>
 </div>
 <!-- App Body Layout -->
@@ -452,7 +452,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="lg:col-span-5 flex flex-col items-center text-center">
 <div class="relative">
 <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary-fixed-dim/30 absolute inset-0 filter blur-3xl -z-10"></div>
-<img alt="Tumi the friendly mascot bird smiling warmly and waving hello" class="w-72 sm:w-88 h-auto object-contain mx-auto drop-shadow-xl hover:rotate-3 transition-transform duration-300" src="https://lh3.googleusercontent.com/aida/AEtjO1U3YQh5ndXkf4Wj1tPP45eaRpfGGi349UfItqd0mVCUwmYhDfDydveF-_iU0ZcbT3vSyaW6UYeohqPtYZ7bPzQw6k7DI5nTfEY4cs71JWZfLtk4drQQ4AG1A-p3LYbwuXYPb-mKOtEJFZ7oXejsdtcEXWQE-mYGADWe3P9uFR2Dm5snoYUSYP41cavc8AaDrSSNyBWK1L9o_HqTYQ6dnuwaf1VgIWmU_QzNz-rFXayAw0fGdcwIEOpP46k">
+<img alt="Tumi the friendly mascot bird smiling warmly and waving hello" class="w-72 sm:w-88 h-auto object-contain mx-auto drop-shadow-xl hover:rotate-3 transition-transform duration-300" src="/images/tumi-waving.jpg">
 </div>
 <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container shadow-sm">
 <span class="material-symbols-outlined text-primary text-[18px]">favorite</span>
