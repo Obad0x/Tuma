@@ -12,6 +12,7 @@ import { auth } from "@/auth";
 import { TumaEscrowABI } from "@/lib/abi";
 import { ESCROW_ADDRESS, arc, isEscrowConfigured } from "@/lib/arc";
 import { getPayment } from "@/lib/chain";
+import { recordClaim, upsertUser } from "@/lib/ledger";
 
 export const runtime = "nodejs";
 
@@ -123,6 +124,18 @@ export async function POST(request: Request) {
 
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status !== "success") return fail("The release transaction failed.", 502);
+
+    // Persist the claim + release tx hash (no-op without a database).
+    const xUserId = session?.user?.xUserId ?? null;
+    const userId = xUserId
+      ? await upsertUser({
+          xUserId,
+          username,
+          name: session?.user?.name ?? null,
+          image: session?.user?.image ?? null,
+        }).catch(() => null)
+      : null;
+    await recordClaim({ escrowId: id, recipient, txHash: hash, userId, username }).catch(() => undefined);
 
     return NextResponse.json({ txHash: hash });
   } catch (error) {

@@ -244,6 +244,25 @@ export function SendExperience() {
       const id = deposited ? (deposited.args as { id: bigint }).id.toString() : undefined;
       if (!id) throw new Error("Payment sent, but the payment id could not be read.");
 
+      // Cache the payment + deposit tx hash in the database (no-op if unset).
+      if (address) {
+        void fetch("/api/payments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            escrowId: id,
+            sender: address,
+            handle: normalized,
+            amountWei: amountWei.toString(),
+            amountUsdc: amount.trim(),
+            expiry: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+            depositTxHash: depositHash,
+            depositBlock: Number(receipt.blockNumber),
+            note,
+          }),
+        }).catch(() => undefined);
+      }
+
       setResult({ id, handle: normalized, amount: amount.trim(), note, txHash: depositHash });
       setStatus("idle");
       setStep(4);

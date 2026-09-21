@@ -1,0 +1,101 @@
+// Tuma database schema (PostgreSQL).
+// Apply with: npx prisma migrate deploy  (prod) or npx prisma db push (dev).
+// The app works without a database too — it falls back to reading the chain.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentStatus {
+  OPEN
+  CLAIMED
+  REFUNDED
+  EXPIRED
+}
+
+/// X (Twitter) account that signed in with OAuth.
+model User {
+  id        String     @id @default(cuid())
+  xUserId   String     @unique
+  username  String     @unique
+  name      String?
+  image     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  claims    Claim[]
+  settings  Settings?
+  payments  Payment[]
+}
+
+/// Mirrors an escrow payment and records the on-chain transaction hashes.
+model Payment {
+  id              String        @id @default(cuid())
+  /// On-chain escrow id (unique per escrow contract).
+  escrowId        String        @unique
+  chainId         Int
+  contractAddress String
+  sender          String
+  handle          String
+  amountWei       String
+  amountUsdc      String
+  expiry          DateTime
+  status          PaymentStatus @default(OPEN)
+  depositTxHash   String        @unique
+  depositBlock    BigInt
+  releaseTxHash   String?
+  refundTxHash    String?
+  recipient       String?
+  note            String?
+  user            User?         @relation(fields: [userId], references: [id])
+  userId          String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  claims          Claim[]
+
+  @@index([sender])
+  @@index([handle])
+  @@index([status])
+}
+
+/// A release (claim) of a payment to a recipient wallet.
+model Claim {
+  id        String   @id @default(cuid())
+  payment   Payment  @relation(fields: [paymentId], references: [id])
+  paymentId String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  username  String?
+  recipient String
+  txHash    String
+  createdAt DateTime @default(now())
+}
+
+/// User profile + preferences (replaces the localStorage store when a DB is set).
+model Settings {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String   @unique
+  displayName   String?
+  bio           String?
+  currency      String   @default("NGN")
+  avatar        String?
+  notifications Boolean  @default(true)
+  companion     Boolean  @default(true)
+  notifySecurity Boolean @default(true)
+  visibility    String   @default("public")
+  discoverable  Boolean  @default(true)
+  directorySearch Boolean @default(true)
+  updatedAt     DateTime @updatedAt
+}
+
+/// Indexer bookkeeping so we know how far we have synced the chain.
+model IndexerState {
+  id            String   @id @default("escrow")
+  lastBlock     BigInt
+  updatedAt     DateTime @updatedAt
+}

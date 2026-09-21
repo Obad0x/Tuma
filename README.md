@@ -52,7 +52,7 @@ app/                    Next.js routes
   payments/page.tsx     /payments    Activity feed + receipts + refunds
   profile/page.tsx      /profile     Profile & settings (localStorage)
   settings/page.tsx     /settings    Account, security, notifications, privacy
-  (app)/claim/[id]/...  /claim/[id]  Claim
+  claim/[id]/page.tsx   /claim/[id]  Claim (OAuth gate → release → success)
   (app)/admin/page.tsx  /admin       Protocol dashboard + operator tools
   api/claim/route.ts    POST /api/claim  (operator release)
   api/rates/route.ts    GET  /api/rates  (free USD FX rates)
@@ -113,6 +113,26 @@ USDC for gas (USDC is gas on Arc). Keep amounts small.
 | `AUTH_TWITTER_ID` / `AUTH_TWITTER_SECRET` | server | X OAuth 2.0 credentials |
 | `OPERATOR_PRIVATE_KEY` | server | Wallet that calls `release()`. **Never** expose it |
 | `DEPLOYER_PRIVATE_KEY` | contracts | Deploy only |
+| `DATABASE_URL` | server | Postgres connection string (optional; enables persistence) |
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | client | WalletConnect / Zerion mobile (optional) |
+
+## Database (optional)
+
+The app runs fully without a database (it reads the chain directly). Set
+`DATABASE_URL` to persist users, payments and the **on-chain tx hashes**:
+
+```bash
+# any Postgres: local, Neon, Supabase, ...
+echo 'DATABASE_URL=postgresql://user:pass@host:5432/tuma' >> .env.local
+npx prisma db push          # create the tables
+npm run dev
+curl -X POST localhost:3000/api/indexer   # backfill payments + tx hashes from chain
+```
+
+- Models live in `prisma/schema.prisma` (`User`, `Payment`, `Claim`, `Settings`, `IndexerState`).
+- Deposits are cached with their tx hash by `POST /api/payments` (called from the send flow).
+- Claims record the release tx hash in `POST /api/claim`.
+- `POST /api/indexer` backfills everything from escrow events (idempotent).
 
 ## Contracts
 
