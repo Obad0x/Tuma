@@ -9,7 +9,6 @@ import {
   useAccount,
   useBalance,
   useConnect,
-  useDisconnect,
   usePublicClient,
   useReadContract,
   useSwitchChain,
@@ -67,7 +66,6 @@ export function SendExperience() {
   const searchParams = useSearchParams();
   const { address, isConnected, chainId } = useAccount();
   const { connectors, connectAsync, isPending: connecting } = useConnect();
-  const { disconnect } = useDisconnect();
   const { switchChain, isPending: switching } = useSwitchChain();
   const publicClient = usePublicClient();
   const { writeContractAsync } = useWriteContract();
@@ -285,6 +283,9 @@ export function SendExperience() {
             <Link href="/payments" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
               <span className="font-label-lg text-label-lg">Activity</span>
             </Link>
+            <Link href="/profile" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
+              <span className="font-label-lg text-label-lg">Profile</span>
+            </Link>
             <Link href="/admin" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
               <span className="font-label-lg text-label-lg">Admin</span>
             </Link>
@@ -318,9 +319,9 @@ export function SendExperience() {
                 <span className="font-headline-sm text-headline-sm text-on-surface">{balanceText ? `${balanceText} USDC` : "—"}</span>
               </div>
               {ready ? (
-                <button onClick={() => disconnect()} className="rounded-full border border-surface-container-high text-on-surface px-space-md py-space-xs font-label-lg text-label-lg hover:bg-surface-container transition-colors">
+                <Link href="/profile" className="rounded-full border border-surface-container-high text-on-surface px-space-md py-space-xs font-label-lg text-label-lg hover:bg-surface-container transition-colors">
                   {shortAddress(address)}
-                </button>
+                </Link>
               ) : (
                 <button onClick={() => setPickerOpen(true)} className="rounded-full bg-primary-container text-on-primary px-space-md py-space-xs font-label-lg text-label-lg shadow-sm hover:bg-primary transition-colors">
                   Connect wallet

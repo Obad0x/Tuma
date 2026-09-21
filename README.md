@@ -50,6 +50,7 @@ app/                    Next.js routes
   dashboard/page.tsx    /dashboard   Wallet, live rates, activity
   send/page.tsx         /send        4-step send wizard (recipient → amount → review → sent)
   payments/page.tsx     /payments    Activity feed + receipts + refunds
+  profile/page.tsx      /profile     Profile & settings (localStorage)
   (app)/claim/[id]/...  /claim/[id]  Claim
   (app)/admin/page.tsx  /admin       Protocol dashboard + operator tools
   api/claim/route.ts    POST /api/claim  (operator release)

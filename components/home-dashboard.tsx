@@ -8,7 +8,6 @@ import {
   useAccount,
   useBalance,
   useConnect,
-  useDisconnect,
   usePublicClient,
   useSwitchChain,
   type Connector,
@@ -95,7 +94,6 @@ function buildSpark(values: number[]): { line: string; area: string } | null {
 export function HomeDashboard() {
   const { address, isConnected, chainId } = useAccount();
   const { connectors, connectAsync, isPending: connecting } = useConnect();
-  const { disconnect } = useDisconnect();
   const { switchChain, isPending: switching } = useSwitchChain();
   const publicClient = usePublicClient();
   const { data: session } = useSession();
@@ -257,6 +255,12 @@ export function HomeDashboard() {
               <span className="font-label-lg text-label-lg">Activity</span>
             </Link>
             <Link
+              href="/profile"
+              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
+            >
+              <span className="font-label-lg text-label-lg">Profile</span>
+            </Link>
+            <Link
               href="/admin"
               className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
             >
@@ -310,13 +314,13 @@ export function HomeDashboard() {
                 </span>
               </div>
               {isConnected ? (
-                <button
-                  onClick={() => disconnect()}
-                  title="Disconnect"
+                <Link
+                  href="/profile"
+                  title="Profile"
                   className="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"
                 >
                   <span className="material-symbols-outlined text-[22px]">account_circle</span>
-                </button>
+                </Link>
               ) : (
                 <button
                   onClick={() => setPickerOpen(true)}
