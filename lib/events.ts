@@ -7,6 +7,8 @@ export type SenderPayment = {
   id: string;
   handle: string;
   amount: string;
+  createdAt: number;
+  createdLabel: string;
   expiry: number;
   expiryLabel: string;
   expired: boolean;
@@ -16,13 +18,15 @@ export type SenderPayment = {
 /// Some RPCs cap eth_getLogs ranges, so we scan in chunks.
 const CHUNK = 10_000n;
 const MAX_CHUNKS = 200;
+const CLAIM_PERIOD_SECONDS = 30 * 24 * 60 * 60;
 
 export async function fetchSenderPayments(
   client: PublicClient,
   sender: `0x${string}`,
 ): Promise<SenderPayment[]> {
   const latest = await client.getBlockNumber();
-  const deposits: { id: bigint; handle: string; amount: bigint; expiry: bigint }[] = [];
+  const deposits: { id: bigint; handle: string; amount: bigint; expiry: bigint; block: bigint }[] =
+    [];
 
   let from = ESCROW_DEPLOY_BLOCK;
   let chunks = 0;
@@ -38,14 +42,29 @@ export async function fetchSenderPayments(
     });
     for (const event of events) {
       const { id, handle, amount, expiry } = event.args;
-      if (id === undefined || handle === undefined || amount === undefined || expiry === undefined) {
+      if (
+        id === undefined ||
+        handle === undefined ||
+        amount === undefined ||
+        expiry === undefined ||
+        event.blockNumber == null
+      ) {
         continue;
       }
-      deposits.push({ id, handle, amount, expiry });
+      deposits.push({ id, handle, amount, expiry, block: event.blockNumber });
     }
     from = to + 1n;
     chunks++;
   }
+
+  const blockTimestamps = new Map<string, bigint>();
+  const blocks = new Set(deposits.map((deposit) => deposit.block.toString()));
+  await Promise.all(
+    [...blocks].map(async (blockNumber) => {
+      const block = await client.getBlock({ blockNumber: BigInt(blockNumber) });
+      blockTimestamps.set(blockNumber, block.timestamp);
+    }),
+  );
 
   const now = Math.floor(Date.now() / 1000);
   const payments = await Promise.all(
@@ -57,10 +76,18 @@ export async function fetchSenderPayments(
         args: [deposit.id],
       });
       const expirySeconds = Number(deposit.expiry);
+      const createdBlock = blockTimestamps.get(deposit.block.toString());
+      const createdSeconds =
+        createdBlock !== undefined ? Number(createdBlock) : expirySeconds - CLAIM_PERIOD_SECONDS;
       return {
         id: deposit.id.toString(),
         handle: deposit.handle,
         amount: formatUnits(deposit.amount, USDC_DECIMALS),
+        createdAt: createdSeconds,
+        createdLabel: new Intl.DateTimeFormat("en-US", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        }).format(new Date(createdSeconds * 1000)),
         expiry: expirySeconds,
         expiryLabel: new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(
           new Date(expirySeconds * 1000),
@@ -74,12 +101,12 @@ export async function fetchSenderPayments(
   return payments.sort((a, b) => Number(BigInt(b.id) - BigInt(a.id)));
 }
 
-/// Settlement durations (seconds) for the sender's claimed payments, measured
-/// from the deposit block timestamp to the release block timestamp.
-export async function fetchSettlementDurations(
+/// Settlement speed (seconds) per payment id, measured from the deposit block
+/// timestamp to the release block timestamp, for the sender's claimed payments.
+export async function fetchSettlementSpeeds(
   client: PublicClient,
   sender: `0x${string}`,
-): Promise<number[]> {
+): Promise<Record<string, number>> {
   const latest = await client.getBlockNumber();
   const depositBlocks = new Map<string, bigint>();
   const releaseBlocks = new Map<string, bigint>();
@@ -134,7 +161,7 @@ export async function fetchSettlementDurations(
     }),
   );
 
-  const durations: number[] = [];
+  const speeds: Record<string, number> = {};
   for (const [id, depositBlock] of depositBlocks) {
     const releaseBlock = releaseBlocks.get(id);
     if (releaseBlock === undefined) continue;
@@ -142,8 +169,17 @@ export async function fetchSettlementDurations(
     const end = timestamps.get(releaseBlock.toString());
     if (start === undefined || end === undefined) continue;
     const seconds = Number(end - start);
-    if (seconds >= 0) durations.push(seconds);
+    if (seconds >= 0) speeds[id] = seconds;
   }
 
-  return durations;
+  return speeds;
+}
+
+/// Convenience wrapper returning just the durations.
+export async function fetchSettlementDurations(
+  client: PublicClient,
+  sender: `0x${string}`,
+): Promise<number[]> {
+  const speeds = await fetchSettlementSpeeds(client, sender);
+  return Object.values(speeds);
 }
