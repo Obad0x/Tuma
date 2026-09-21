@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { AppNav } from "./app-nav";
 import { useMemo, useState } from "react";
 import {
   useAccount,
@@ -14,14 +15,13 @@ import {
 } from "wagmi";
 import { USDC_ADDRESS, arc } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
-import { fetchSenderPayments, fetchSettlementDurations, type SenderPayment } from "@/lib/events";
+import { fetchSenderOverview, type SenderPayment } from "@/lib/events";
 import { shortAddress } from "@/lib/format";
 import { isValidHandle, normalizeHandle } from "@/lib/handles";
 
 const X_LOGO = "𝕏";
 
 // Self-hosted design assets (downloaded from the export) for fast, reliable loads.
-const TUMA_LOGO = "/images/tuma-logo.jpg";
 const TUMI_WAVING = "/images/tumi-waving.jpg";
 const TUMI_CURIOUS = "/images/tumi-curious.jpg";
 
@@ -123,17 +123,13 @@ export function HomeDashboard() {
     staleTime: 3_600_000,
   });
 
-  const { data: payments, isLoading: paymentsLoading } = useQuery({
-    queryKey: ["dashboard-payments", address, chainId],
-    queryFn: () => fetchSenderPayments(publicClient!, address!),
+  const { data: overview, isLoading: paymentsLoading } = useQuery({
+    queryKey: ["sender-overview", address, chainId],
+    queryFn: () => fetchSenderOverview(publicClient!, address!),
     enabled: !!publicClient && !!address && onArc,
   });
 
-  const { data: durations } = useQuery({
-    queryKey: ["dashboard-durations", address, chainId],
-    queryFn: () => fetchSettlementDurations(publicClient!, address!),
-    enabled: !!publicClient && !!address && onArc,
-  });
+  const payments = overview?.payments;
 
   const uniqueConnectors = useMemo(() => {
     const seen = new Set<string>();
@@ -157,7 +153,7 @@ export function HomeDashboard() {
   const usdcText = balance ? trimAmount(balance.formatted) : null;
   const fiatValue = rate && balance ? Number(balance.formatted) * rate : null;
 
-  const settlement = durations ?? [];
+  const settlement = useMemo(() => Object.values(overview?.speeds ?? {}), [overview]);
   const medianSpeed = median(settlement);
   const spark = buildSpark(settlement);
 
@@ -226,51 +222,7 @@ export function HomeDashboard() {
     <div className="bg-background font-body-md text-body-md text-on-surface min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <div className="flex flex-col px-space-md">
-            <div className="flex items-center gap-space-sm px-space-sm mb-space-xl">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img alt="Tuma Logo" className="h-8 w-auto object-contain" src={TUMA_LOGO} />
-              <span className="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span>
-            </div>
-          <nav className="flex flex-col gap-space-xs">
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full bg-primary-container text-on-primary font-headline-sm transition-all"
-            >
-              <span className="font-label-lg text-label-lg">Home</span>
-            </Link>
-            <Link
-              href="/send"
-              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
-            >
-              <span className="font-label-lg text-label-lg">Send</span>
-            </Link>
-            <Link
-              href="/payments"
-              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
-            >
-              <span className="font-label-lg text-label-lg">Activity</span>
-            </Link>
-            <Link
-              href="/profile"
-              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
-            >
-              <span className="font-label-lg text-label-lg">Profile</span>
-            </Link>
-            <Link
-              href="/settings"
-              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
-            >
-              <span className="font-label-lg text-label-lg">Settings</span>
-            </Link>
-            <Link
-              href="/admin"
-              className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"
-            >
-              <span className="font-label-lg text-label-lg">Admin</span>
-            </Link>
-          </nav>
-        </div>
+        <AppNav active="home" />
         <div className="px-space-md">
           <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] flex flex-col gap-space-xs">
             <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">

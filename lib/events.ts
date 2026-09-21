@@ -15,6 +15,12 @@ export type SenderPayment = {
   status: number;
 };
 
+export type SenderOverview = {
+  payments: SenderPayment[];
+  /// Settlement speed (seconds) per payment id, for claimed payments.
+  speeds: Record<string, number>;
+};
+
 /// Some RPCs cap eth_getLogs ranges, so we scan in chunks.
 const CHUNK = 10_000n;
 const MAX_CHUNKS = 200;
@@ -28,27 +34,41 @@ function scanStart(latest: bigint): bigint {
   return latest > UNKNOWN_WINDOW ? latest - UNKNOWN_WINDOW : 0n;
 }
 
-export async function fetchSenderPayments(
+/// Single pass over the escrow logs: gets the sender's payments *and* their
+/// settlement speeds together, so pages never scan the same logs twice.
+export async function fetchSenderOverview(
   client: PublicClient,
   sender: `0x${string}`,
-): Promise<SenderPayment[]> {
+): Promise<SenderOverview> {
   const latest = await client.getBlockNumber();
   const deposits: { id: bigint; handle: string; amount: bigint; expiry: bigint; block: bigint }[] =
     [];
+  const releaseBlocks = new Map<string, bigint>();
 
   let from = scanStart(latest);
   let chunks = 0;
   while (from <= latest && chunks < MAX_CHUNKS) {
     const to = from + CHUNK - 1n > latest ? latest : from + CHUNK - 1n;
-    const events = await client.getContractEvents({
-      address: ESCROW_ADDRESS,
-      abi: TumaEscrowABI,
-      eventName: "Deposited",
-      args: { sender },
-      fromBlock: from,
-      toBlock: to,
-    });
-    for (const event of events) {
+
+    const [depositEvents, releaseEvents] = await Promise.all([
+      client.getContractEvents({
+        address: ESCROW_ADDRESS,
+        abi: TumaEscrowABI,
+        eventName: "Deposited",
+        args: { sender },
+        fromBlock: from,
+        toBlock: to,
+      }),
+      client.getContractEvents({
+        address: ESCROW_ADDRESS,
+        abi: TumaEscrowABI,
+        eventName: "Released",
+        fromBlock: from,
+        toBlock: to,
+      }),
+    ]);
+
+    for (const event of depositEvents) {
       const { id, handle, amount, expiry } = event.args;
       if (
         id === undefined ||
@@ -61,20 +81,27 @@ export async function fetchSenderPayments(
       }
       deposits.push({ id, handle, amount, expiry, block: event.blockNumber });
     }
+    for (const event of releaseEvents) {
+      if (event.args.id !== undefined && event.blockNumber != null) {
+        releaseBlocks.set(event.args.id.toString(), event.blockNumber);
+      }
+    }
+
     from = to + 1n;
     chunks++;
   }
 
+  // Fetch block timestamps once (deduped) for deposits and releases.
   const blockTimestamps = new Map<string, bigint>();
-  const blocks = new Set(deposits.map((deposit) => deposit.block.toString()));
+  const blocks = new Set<string>();
+  for (const deposit of deposits) blocks.add(deposit.block.toString());
+  for (const [, block] of releaseBlocks) blocks.add(block.toString());
   await Promise.all(
     [...blocks].map(async (blockNumber) => {
       const block = await client.getBlock({ blockNumber: BigInt(blockNumber) });
       blockTimestamps.set(blockNumber, block.timestamp);
     }),
   );
-
-  const now = Math.floor(Date.now() / 1000);
 
   // One batched call for all statuses instead of N individual reads.
   const statuses = await client
@@ -89,7 +116,8 @@ export async function fetchSenderPayments(
     })
     .catch(() => []);
 
-  const payments = deposits.map((deposit, index) => {
+  const now = Math.floor(Date.now() / 1000);
+  const payments: SenderPayment[] = deposits.map((deposit, index) => {
     const result = statuses[index];
     const status =
       result && result.status === "success"
@@ -117,88 +145,26 @@ export async function fetchSenderPayments(
     } satisfies SenderPayment;
   });
 
-  return payments.sort((a, b) => Number(BigInt(b.id) - BigInt(a.id)));
-}
-
-/// Settlement speed (seconds) per payment id, measured from the deposit block
-/// timestamp to the release block timestamp, for the sender's claimed payments.
-export async function fetchSettlementSpeeds(
-  client: PublicClient,
-  sender: `0x${string}`,
-): Promise<Record<string, number>> {
-  const latest = await client.getBlockNumber();
-  const depositBlocks = new Map<string, bigint>();
-  const releaseBlocks = new Map<string, bigint>();
-
-  let from = scanStart(latest);
-  let chunks = 0;
-  while (from <= latest && chunks < MAX_CHUNKS) {
-    const to = from + CHUNK - 1n > latest ? latest : from + CHUNK - 1n;
-
-    const [deposits, releases] = await Promise.all([
-      client.getContractEvents({
-        address: ESCROW_ADDRESS,
-        abi: TumaEscrowABI,
-        eventName: "Deposited",
-        args: { sender },
-        fromBlock: from,
-        toBlock: to,
-      }),
-      client.getContractEvents({
-        address: ESCROW_ADDRESS,
-        abi: TumaEscrowABI,
-        eventName: "Released",
-        fromBlock: from,
-        toBlock: to,
-      }),
-    ]);
-
-    for (const event of deposits) {
-      if (event.args.id !== undefined && event.blockNumber != null) {
-        depositBlocks.set(event.args.id.toString(), event.blockNumber);
-      }
-    }
-    for (const event of releases) {
-      if (event.args.id !== undefined && event.blockNumber != null) {
-        releaseBlocks.set(event.args.id.toString(), event.blockNumber);
-      }
-    }
-
-    from = to + 1n;
-    chunks++;
-  }
-
-  const timestamps = new Map<string, bigint>();
-  const blockNumbers = new Set<string>();
-  for (const [, block] of depositBlocks) blockNumbers.add(block.toString());
-  for (const [, block] of releaseBlocks) blockNumbers.add(block.toString());
-
-  await Promise.all(
-    [...blockNumbers].map(async (blockNumber) => {
-      const block = await client.getBlock({ blockNumber: BigInt(blockNumber) });
-      timestamps.set(blockNumber, block.timestamp);
-    }),
-  );
-
   const speeds: Record<string, number> = {};
-  for (const [id, depositBlock] of depositBlocks) {
+  for (const deposit of deposits) {
+    const id = deposit.id.toString();
     const releaseBlock = releaseBlocks.get(id);
     if (releaseBlock === undefined) continue;
-    const start = timestamps.get(depositBlock.toString());
-    const end = timestamps.get(releaseBlock.toString());
+    const start = blockTimestamps.get(deposit.block.toString());
+    const end = blockTimestamps.get(releaseBlock.toString());
     if (start === undefined || end === undefined) continue;
     const seconds = Number(end - start);
     if (seconds >= 0) speeds[id] = seconds;
   }
 
-  return speeds;
+  payments.sort((a, b) => Number(BigInt(b.id) - BigInt(a.id)));
+  return { payments, speeds };
 }
 
-/// Convenience wrapper returning just the durations.
-export async function fetchSettlementDurations(
+/// Payments-only convenience wrapper.
+export async function fetchSenderPayments(
   client: PublicClient,
   sender: `0x${string}`,
-): Promise<number[]> {
-  const speeds = await fetchSettlementSpeeds(client, sender);
-  return Object.values(speeds);
+): Promise<SenderPayment[]> {
+  return (await fetchSenderOverview(client, sender)).payments;
 }

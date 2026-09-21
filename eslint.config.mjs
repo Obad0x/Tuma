@@ -5,12 +5,6 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // App Router loads the Material Symbols icon font via <link> in the root
-  // layout; this pages-router rule does not apply.
-  {
-    files: ["app/layout.tsx"],
-    rules: { "@next/next/no-page-custom-font": "off" },
-  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

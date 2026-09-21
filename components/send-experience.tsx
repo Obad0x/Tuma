@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { AppNav } from "./app-nav";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { parseEventLogs, parseUnits } from "viem";
@@ -266,33 +267,7 @@ export function SendExperience() {
     <div className="bg-background font-body-md text-body-md text-on-surface min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <div className="flex flex-col px-space-md">
-          <div className="flex items-center gap-space-sm px-space-sm mb-space-xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="Tuma" className="h-8 w-8 rounded-lg object-cover" src="/images/tuma-logo.jpg" />
-            <span className="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span>
-          </div>
-          <nav className="flex flex-col gap-space-xs">
-            <Link href="/dashboard" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
-              <span className="font-label-lg text-label-lg">Home</span>
-            </Link>
-            <Link href="/send" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full bg-primary-container text-on-primary font-headline-sm transition-all">
-              <span className="font-label-lg text-label-lg">Send</span>
-            </Link>
-            <Link href="/payments" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
-              <span className="font-label-lg text-label-lg">Activity</span>
-            </Link>
-            <Link href="/profile" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
-              <span className="font-label-lg text-label-lg">Profile</span>
-            </Link>
-            <Link href="/settings" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
-              <span className="font-label-lg text-label-lg">Settings</span>
-            </Link>
-            <Link href="/admin" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
-              <span className="font-label-lg text-label-lg">Admin</span>
-            </Link>
-          </nav>
-        </div>
+        <AppNav active="send" />
         <div className="px-space-md">
           <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] flex flex-col gap-space-xs">
             <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Live rate</span>
