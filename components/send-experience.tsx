@@ -286,6 +286,9 @@ export function SendExperience() {
             <Link href="/profile" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
               <span className="font-label-lg text-label-lg">Profile</span>
             </Link>
+            <Link href="/settings" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
+              <span className="font-label-lg text-label-lg">Settings</span>
+            </Link>
             <Link href="/admin" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
               <span className="font-label-lg text-label-lg">Admin</span>
             </Link>

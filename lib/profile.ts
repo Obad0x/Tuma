@@ -9,6 +9,10 @@ export type ProfileSettings = {
   avatar: string;
   notifications: boolean;
   companion: boolean;
+  notifySecurity: boolean;
+  visibility: "public" | "contacts" | "private";
+  discoverable: boolean;
+  directorySearch: boolean;
 };
 
 export const DEFAULT_PROFILE: ProfileSettings = {
@@ -18,6 +22,10 @@ export const DEFAULT_PROFILE: ProfileSettings = {
   avatar: "",
   notifications: true,
   companion: true,
+  notifySecurity: true,
+  visibility: "public",
+  discoverable: true,
+  directorySearch: true,
 };
 
 const STORAGE_KEY = "tuma.profile.v1";
@@ -56,6 +64,16 @@ export function updateProfile(patch: Partial<ProfileSettings>): void {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
   } catch {
     // ignore storage failures (private mode, etc.)
+  }
+  listeners.forEach((listener) => listener());
+}
+
+export function resetProfile(): void {
+  cache = DEFAULT_PROFILE;
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // ignore
   }
   listeners.forEach((listener) => listener());
 }

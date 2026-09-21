@@ -148,6 +148,9 @@ export function ProfileView() {
             <Link href="/profile" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full bg-primary-container text-on-primary font-headline-sm transition-all">
               <span className="font-label-lg text-label-lg">Profile</span>
             </Link>
+            <Link href="/settings" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
+              <span className="font-label-lg text-label-lg">Settings</span>
+            </Link>
             <Link href="/admin" className="flex items-center gap-space-md px-space-md py-space-sm rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all">
               <span className="font-label-lg text-label-lg">Admin</span>
             </Link>
@@ -214,6 +217,10 @@ export function ProfileView() {
                 </p>
               </div>
               <div className="flex items-center gap-space-sm flex-wrap">
+                <Link href="/settings" className="inline-flex items-center gap-2 px-space-md py-2.5 rounded-full bg-surface-container-lowest text-on-surface font-label-lg text-label-lg shadow-[0_4px_12px_rgba(26,24,22,0.04)] hover:bg-surface-container-high transition-colors">
+                  <span className="material-symbols-outlined text-[18px]">settings</span>
+                  Settings
+                </Link>
                 <button onClick={() => signOut()} className="inline-flex items-center gap-2 px-space-md py-2.5 rounded-full bg-surface-container-lowest text-on-surface font-label-lg text-label-lg shadow-[0_4px_12px_rgba(26,24,22,0.04)] hover:bg-surface-container-high transition-colors">
                   <span className="material-symbols-outlined text-[18px]">logout</span>
                   Sign out
