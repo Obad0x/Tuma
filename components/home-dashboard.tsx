@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { AppNav } from "./app-nav";
+import { MobileTabBar } from "./mobile-tabbar";
 import { useMemo, useState } from "react";
 import {
   useAccount,
@@ -221,7 +222,7 @@ export function HomeDashboard() {
   return (
     <div className="bg-background font-body-md text-body-md text-on-surface min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col justify-between py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 hidden flex-col justify-between lg:flex py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <AppNav active="home" />
         <div className="px-space-md">
           <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] flex flex-col gap-space-xs">
@@ -241,9 +242,9 @@ export function HomeDashboard() {
         </div>
       </aside>
 
-      <div className="pl-64 flex flex-col min-h-screen">
+      <div className="flex min-h-screen flex-col lg:pl-64">
         {/* Header */}
-        <header className="fixed top-0 left-64 right-0 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+        <header className="fixed left-0 right-0 top-0 lg:left-64 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
           <div className="w-full h-20 px-space-xl flex items-center justify-between">
             <div className="flex items-center gap-space-md">
               <div className="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-xs rounded-full text-on-surface-variant">
@@ -288,7 +289,7 @@ export function HomeDashboard() {
           </div>
         </header>
 
-        <main className="w-full pt-20 px-space-xl pb-space-xl flex-1 bg-background">
+        <main className="w-full pt-20 px-4 pb-28 lg:px-space-xl lg:pb-space-xl flex-1 bg-background">
           <div className="flex flex-col w-full max-w-7xl mx-auto space-y-space-lg">
             {/* Greeting */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md pt-space-xs">
@@ -694,6 +695,7 @@ export function HomeDashboard() {
           </div>
         </main>
       </div>
+      <MobileTabBar active="home" />
 
       {/* Request cash modal */}
       {requestOpen ? (

@@ -18,6 +18,23 @@ enum PaymentStatus {
   EXPIRED
 }
 
+enum TicketStatus {
+  OPEN
+  PENDING
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+}
+
+enum TicketAuthor {
+  USER
+  ADMIN
+}
+
 /// X (Twitter) account that signed in with OAuth.
 model User {
   id        String     @id @default(cuid())
@@ -30,6 +47,7 @@ model User {
   claims    Claim[]
   settings  Settings?
   payments  Payment[]
+  tickets   Ticket[]
 }
 
 /// Mirrors an escrow payment and records the on-chain transaction hashes.
@@ -106,4 +124,34 @@ model IndexerState {
   id            String   @id @default("escrow")
   lastBlock     BigInt
   updatedAt     DateTime @updatedAt
+}
+
+/// A support ticket opened by a user.
+model Ticket {
+  id        String         @id @default(cuid())
+  user      User?          @relation(fields: [userId], references: [id])
+  userId    String?
+  email     String?
+  subject   String
+  category  String         @default("general")
+  status    TicketStatus   @default(OPEN)
+  priority  TicketPriority @default(NORMAL)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  messages  TicketMessage[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+/// A message in a support ticket (from the user or an admin).
+model TicketMessage {
+  id        String       @id @default(cuid())
+  ticket    Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String
+  author    TicketAuthor @default(USER)
+  body      String
+  createdAt DateTime     @default(now())
+
+  @@index([ticketId])
 }

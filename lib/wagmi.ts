@@ -4,9 +4,7 @@ import { arc } from "./arc";
 
 const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
 
-/// WalletConnect is the primary connection method (QR / mobile, and it also
-/// surfaces Zerion, MetaMask, etc.). Injected wallets stay available as a
-/// fallback when no project id is configured.
+/// Two options only: WalletConnect (QR / mobile) and the injected browser wallet.
 const connectors: CreateConnectorFn[] = [];
 
 if (walletConnectProjectId) {
@@ -24,7 +22,7 @@ if (walletConnectProjectId) {
   );
 }
 
-connectors.push(injected(), injected({ target: "zerion" }));
+connectors.push(injected());
 
 export const wagmiConfig = createConfig({
   chains: [arc],

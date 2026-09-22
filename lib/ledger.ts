@@ -132,6 +132,27 @@ export async function getPaymentRecord(escrowId: string) {
   return db.payment.findUnique({ where: { escrowId } });
 }
 
+/// Read a user's profile settings.
+export async function getSettings(userId: string) {
+  const db = getDb();
+  if (!db) return null;
+  return db.settings.findUnique({ where: { userId } });
+}
+
+/// Upsert a user's profile settings.
+export async function upsertSettings(
+  userId: string,
+  patch: Record<string, unknown>,
+) {
+  const db = getDb();
+  if (!db) return null;
+  return db.settings.upsert({
+    where: { userId },
+    create: { userId, ...patch },
+    update: patch,
+  });
+}
+
 /// Persistent (database-backed) rate limit. Returns true when over the limit.
 /// Callers fall back to an in-memory limiter when no database is configured.
 export async function isRateLimited(

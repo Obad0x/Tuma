@@ -1,16 +1,15 @@
 import { NextResponse } from "next/server";
 import { createPublicClient, http } from "viem";
 import { arc, isEscrowConfigured } from "@/lib/arc";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { dbEnabled } from "@/lib/db";
-import { isSameOrigin, secretMatches } from "@/lib/http";
+import { isSameOrigin } from "@/lib/http";
 import { indexEscrow, isRateLimited } from "@/lib/ledger";
 
 export const runtime = "nodejs";
 
-const ADMIN_SECRET = process.env.ADMIN_SECRET;
-
 /// Backfill escrow payments + tx hashes from chain events into the database.
-/// Protected by ADMIN_SECRET (sent as `x-admin-secret` or `Authorization: Bearer`).
+/// Protected by ADMIN_SECRET (header) or the console cookie.
 async function run(request: Request) {
   if (!isSameOrigin(request)) {
     return NextResponse.json({ error: "Cross-origin request rejected." }, { status: 403 });
@@ -24,12 +23,7 @@ async function run(request: Request) {
       { status: 503 },
     );
   }
-
-  const provided =
-    request.headers.get("x-admin-secret") ??
-    request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
-    null;
-  if (!secretMatches(provided, ADMIN_SECRET)) {
+  if (!(await isAdminRequest(request))) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
