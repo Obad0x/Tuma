@@ -122,11 +122,14 @@ The app runs fully without a database (it reads the chain directly). Set
 `DATABASE_URL` to persist users, payments and the **on-chain tx hashes**:
 
 ```bash
-# any Postgres: local, Neon, Supabase, ...
+# No Postgres installed? Start a local embedded one (no sudo needed):
+npm run db:dev        # prints the DATABASE_URL to use, Ctrl+C to stop
+
+# or point at any Postgres: local, Neon, Supabase, ...
 echo 'DATABASE_URL=postgresql://user:pass@host:5432/tuma' >> .env.local
 npx prisma db push          # create the tables
 npm run dev
-curl -X POST localhost:3000/api/indexer   # backfill payments + tx hashes from chain
+curl -X POST -H "x-admin-secret: $ADMIN_SECRET" localhost:3000/api/indexer   # backfill tx hashes
 ```
 
 - Models live in `prisma/schema.prisma` (`User`, `Payment`, `Claim`, `Settings`, `IndexerState`).
@@ -146,6 +149,25 @@ npm run deploy:arc       # prints the address and deploy block
 `TumaEscrow` rules: handle is 1–15 chars of lowercase `a-z`, `0-9`, `_` (no `@`);
 30-day claim period; `release` is operator-only; `refund` is sender-only after expiry;
 `ReentrancyGuard` + checks-effects-interactions.
+
+## Security
+
+- **Security headers** (CSP with `frame-ancestors 'none'`, `X-Frame-Options: DENY`,
+  `nosniff`, `Referrer-Policy`, `Permissions-Policy`, HSTS in production) are set in
+  `next.config.ts`.
+- **`POST /api/payments`** requires a signed-in session **and verifies the referenced
+  transaction on-chain** (decodes the `Deposited` event and checks id/sender/amount)
+  before storing — records cannot be spoofed. Inputs are format- and length-validated.
+- **`POST /api/indexer`** requires `ADMIN_SECRET` (`x-admin-secret` or
+  `Authorization: Bearer`), is rate-limited, and fails closed without a configured escrow.
+- **CSRF defense-in-depth**: state-changing routes reject cross-origin requests
+  (`lib/http.ts`), on top of Auth.js's SameSite cookies.
+- **Rate limiting** uses a Postgres `Throttle` table when a database is configured
+  (survives restarts / multiple instances) and falls back to in-memory otherwise.
+  One claim per payment is enforced by a unique constraint.
+- **Secrets** are server-only (`OPERATOR_PRIVATE_KEY`, `ADMIN_SECRET`, `AUTH_SECRET`) and
+  never exposed with `NEXT_PUBLIC_`. `.env*` is gitignored.
+- Set `AUTH_URL` in production so callback URLs do not depend on the request Host header.
 
 ## Trust model (important)
 

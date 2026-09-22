@@ -12,7 +12,12 @@ import { auth } from "@/auth";
 import { TumaEscrowABI } from "@/lib/abi";
 import { ESCROW_ADDRESS, arc, isEscrowConfigured } from "@/lib/arc";
 import { getPayment } from "@/lib/chain";
-import { recordClaim, upsertUser } from "@/lib/ledger";
+import { isSameOrigin } from "@/lib/http";
+import {
+  isRateLimited as dbRateLimited,
+  recordClaim,
+  upsertUser,
+} from "@/lib/ledger";
 
 export const runtime = "nodejs";
 
@@ -65,6 +70,8 @@ function releaseErrorMessage(error: unknown): string {
 }
 
 export async function POST(request: Request) {
+  if (!isSameOrigin(request)) return fail("Cross-origin request rejected.", 403);
+
   const session = await auth();
   const username = session?.user?.username?.toLowerCase();
   if (!username) return fail("Please sign in with X first.", 401);
@@ -72,7 +79,9 @@ export async function POST(request: Request) {
   if (!isEscrowConfigured) return fail("Escrow is not configured yet.", 503);
   if (!OPERATOR_PRIVATE_KEY) return fail("The server operator wallet is not configured.", 503);
 
-  if (rateLimited(username)) {
+  // Prefer the persistent limiter; fall back to in-memory when there is no DB.
+  const limited = (await dbRateLimited(`claim:${username}`, 10, 60)) || rateLimited(username);
+  if (limited) {
     return fail("Too many attempts. Wait a minute and try again.", 429);
   }
 

@@ -132,6 +132,37 @@ export async function getPaymentRecord(escrowId: string) {
   return db.payment.findUnique({ where: { escrowId } });
 }
 
+/// Persistent (database-backed) rate limit. Returns true when over the limit.
+/// Callers fall back to an in-memory limiter when no database is configured.
+export async function isRateLimited(
+  key: string,
+  limit: number,
+  windowSeconds: number,
+): Promise<boolean> {
+  const db = getDb();
+  if (!db) return false;
+  const now = new Date();
+  const resetAt = new Date(now.getTime() + windowSeconds * 1000);
+  try {
+    return await db.$transaction(async (tx) => {
+      const existing = await tx.throttle.findUnique({ where: { key } });
+      if (!existing || existing.resetAt <= now) {
+        await tx.throttle.upsert({
+          where: { key },
+          create: { key, count: 1, resetAt },
+          update: { count: 1, resetAt },
+        });
+        return false;
+      }
+      const next = existing.count + 1;
+      await tx.throttle.update({ where: { key }, data: { count: next } });
+      return next > limit;
+    });
+  } catch {
+    return false;
+  }
+}
+
 /// Backfill payments from escrow events into the database.
 export async function indexEscrow(client: PublicClient): Promise<{ indexed: number }> {
   const db = getDb();
