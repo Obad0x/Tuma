@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { AppNav } from "./app-nav";
+import { WalletModal } from "./wallet-modal";
 import { MobileTabBar } from "./mobile-tabbar";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -10,12 +11,10 @@ import { parseEventLogs, parseUnits } from "viem";
 import {
   useAccount,
   useBalance,
-  useConnect,
   usePublicClient,
   useReadContract,
   useSwitchChain,
   useWriteContract,
-  type Connector,
 } from "wagmi";
 import { TumaEscrowABI, erc20Abi } from "@/lib/abi";
 import { ARC_EXPLORER, ESCROW_ADDRESS, USDC_ADDRESS, USDC_DECIMALS, arc, isEscrowConfigured } from "@/lib/arc";
@@ -67,7 +66,6 @@ function statusInfo(payment: SenderPayment): { label: string; dot: string } {
 export function SendExperience() {
   const searchParams = useSearchParams();
   const { address, isConnected, chainId } = useAccount();
-  const { connectors, connectAsync, isPending: connecting } = useConnect();
   const { switchChain, isPending: switching } = useSwitchChain();
   const publicClient = usePublicClient();
   const { writeContractAsync } = useWriteContract();
@@ -87,7 +85,6 @@ export function SendExperience() {
   const [result, setResult] = useState<Result | null>(null);
   const [copied, setCopied] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [connectError, setConnectError] = useState<string | null>(null);
 
   const onArc = chainId === arc.id;
   const ready = isConnected && onArc;
@@ -126,16 +123,6 @@ export function SendExperience() {
       return { amountWei: null, amountError: `Enter a valid amount (max ${USDC_DECIMALS} decimals).` };
     }
   }, [amount]);
-
-  const uniqueConnectors = useMemo(() => {
-    const seen = new Set<string>();
-    return connectors.filter((connector) => {
-      const key = connector.name.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, [connectors]);
 
   const currencyOptions = useMemo(() => {
     if (!rateData) return POPULAR;
@@ -200,16 +187,6 @@ export function SendExperience() {
 
   function addAmount(value: number) {
     setAmount(String(Number((amountNumber + value).toFixed(2))));
-  }
-
-  async function handleConnect(connector: Connector) {
-    setConnectError(null);
-    try {
-      await connectAsync({ connector });
-      setPickerOpen(false);
-    } catch (e) {
-      setConnectError(friendlyError(e));
-    }
   }
 
   async function confirm() {
@@ -441,27 +418,7 @@ export function SendExperience() {
       <MobileTabBar active="send" />
 
       {/* Connect modal */}
-      {pickerOpen ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-space-md" onClick={() => setPickerOpen(false)}>
-          <div className="w-full max-w-sm bg-surface-container-lowest rounded-lg shadow-[0_20px_32px_-8px_rgba(26,24,22,0.18)] p-space-lg flex flex-col gap-space-sm" onClick={(event) => event.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <span className="font-headline-sm text-headline-sm text-on-surface">Connect a wallet</span>
-              <button onClick={() => setPickerOpen(false)} className="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
-                <span className="material-symbols-outlined text-[18px]">close</span>
-              </button>
-            </div>
-            {uniqueConnectors.map((connector) => (
-              <button key={connector.id} onClick={() => handleConnect(connector)} disabled={connecting} className="flex items-center gap-3 rounded-lg px-3 py-3 text-left hover:bg-surface-container-low transition-colors disabled:opacity-50">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container text-[11px] font-bold uppercase">
-                  {connector.name.slice(0, 1)}
-                </span>
-                <span className="font-body-md text-body-md text-on-surface">{connector.name}</span>
-              </button>
-            ))}
-            {connectError ? <p className="font-body-sm text-body-sm text-error">{connectError}</p> : null}
-          </div>
-        </div>
-      ) : null}
+      <WalletModal open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </div>
   );
 }

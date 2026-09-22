@@ -5,10 +5,11 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { isAddress } from "viem";
-import { useAccount, useConnect, type Connector } from "wagmi";
+import { useAccount } from "wagmi";
 import { ARC_EXPLORER } from "@/lib/arc";
 import type { PaymentView } from "@/lib/chain";
 import { shortAddress } from "@/lib/format";
+import { WalletModal } from "./wallet-modal";
 
 const X_LOGO = "𝕏";
 
@@ -40,10 +41,10 @@ export function ClaimExperience({
 }) {
   const { data: session, status: sessionStatus } = useSession();
   const { address, isConnected } = useAccount();
-  const { connectors, connect } = useConnect();
 
   const [recipient, setRecipient] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [txHash, setTxHash] = useState<string | null>(null);
@@ -154,8 +155,7 @@ export function ClaimExperience({
               target={target}
               validTarget={validTarget}
               isConnected={isConnected}
-              connectors={connectors}
-              onConnect={() => connect({ connector: connectors[0] })}
+              onConnect={() => setWalletOpen(true)}
               onClaim={() => setConfirmOpen(true)}
               error={error}
             />
@@ -214,6 +214,8 @@ export function ClaimExperience({
           </div>
         </div>
       ) : null}
+
+      <WalletModal open={walletOpen} onClose={() => setWalletOpen(false)} />
 
       {/* Tumi widget */}
       <div className="fixed bottom-6 right-6 z-40 flex items-center gap-space-sm">
@@ -275,7 +277,6 @@ function ClaimCard({
   target,
   validTarget,
   isConnected,
-  connectors,
   onConnect,
   onClaim,
   error,
@@ -287,7 +288,6 @@ function ClaimCard({
   target: string;
   validTarget: boolean;
   isConnected: boolean;
-  connectors: readonly Connector[];
   onConnect: () => void;
   onClaim: () => void;
   error: string | null;
@@ -333,13 +333,9 @@ function ClaimCard({
           className="w-full rounded-lg bg-surface-container-low px-space-sm py-3 font-mono text-sm text-on-surface outline-none"
         />
         {!isConnected ? (
-          <div className="flex flex-wrap items-center gap-2 mt-space-sm">
-            {connectors.slice(0, 2).map((connector) => (
-              <button key={connector.id} onClick={onConnect} className="rounded-full bg-surface-container px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">
-                Connect {connector.name}
-              </button>
-            ))}
-          </div>
+          <button onClick={onConnect} className="mt-space-sm rounded-full bg-surface-container px-space-md py-2 font-label-md text-label-md text-on-surface hover:bg-surface-container-high transition-colors">
+            Connect a wallet
+          </button>
         ) : null}
       </div>
 

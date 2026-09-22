@@ -3,16 +3,15 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { AppNav } from "./app-nav";
+import { WalletModal } from "./wallet-modal";
 import { MobileTabBar } from "./mobile-tabbar";
 import { useMemo, useState } from "react";
 import {
   useAccount,
   useBalance,
-  useConnect,
   usePublicClient,
   useSwitchChain,
   useWriteContract,
-  type Connector,
 } from "wagmi";
 import { TumaEscrowABI } from "@/lib/abi";
 import { ARC_EXPLORER, ESCROW_ADDRESS, USDC_ADDRESS, arc } from "@/lib/arc";
@@ -52,7 +51,6 @@ function formatSpeed(seconds: number | undefined): string {
 
 export function ActivityFeed() {
   const { address, isConnected, chainId } = useAccount();
-  const { connectors, connectAsync, isPending: connecting } = useConnect();
   const { switchChain } = useSwitchChain();
   const publicClient = usePublicClient();
   const { writeContractAsync } = useWriteContract();
@@ -65,7 +63,6 @@ export function ActivityFeed() {
   const [toast, setToast] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [connectError, setConnectError] = useState<string | null>(null);
 
   const onArc = chainId === arc.id;
   const ready = isConnected && onArc;
@@ -201,16 +198,6 @@ export function ActivityFeed() {
       setError(friendlyError(e));
     } finally {
       setRefundingId(null);
-    }
-  }
-
-  async function handleConnect(connector: Connector) {
-    setConnectError(null);
-    try {
-      await connectAsync({ connector });
-      setPickerOpen(false);
-    } catch (e) {
-      setConnectError(friendlyError(e));
     }
   }
 
@@ -472,27 +459,7 @@ export function ActivityFeed() {
       </div>
 
       {/* Connect modal */}
-      {pickerOpen ? (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-space-md" onClick={() => setPickerOpen(false)}>
-          <div className="w-full max-w-sm bg-surface-container-lowest rounded-lg shadow-[0_20px_32px_-8px_rgba(26,24,22,0.18)] p-space-lg flex flex-col gap-space-sm" onClick={(event) => event.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <span className="font-headline-sm text-headline-sm text-on-surface">Connect a wallet</span>
-              <button onClick={() => setPickerOpen(false)} className="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
-                <span className="material-symbols-outlined text-[18px]">close</span>
-              </button>
-            </div>
-            {connectors
-              .filter((connector, index, list) => list.findIndex((c) => c.name === connector.name) === index)
-              .map((connector) => (
-                <button key={connector.id} onClick={() => handleConnect(connector)} disabled={connecting} className="flex items-center gap-3 rounded-lg px-3 py-3 text-left hover:bg-surface-container-low transition-colors disabled:opacity-50">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container text-[11px] font-bold uppercase">{connector.name.slice(0, 1)}</span>
-                  <span className="font-body-md text-body-md text-on-surface">{connector.name}</span>
-                </button>
-              ))}
-            {connectError ? <p className="font-body-sm text-body-sm text-error">{connectError}</p> : null}
-          </div>
-        </div>
-      ) : null}
+      <WalletModal open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </div>
   );
 }

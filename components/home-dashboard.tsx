@@ -4,18 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { AppNav } from "./app-nav";
+import { WalletModal } from "./wallet-modal";
 import { MobileTabBar } from "./mobile-tabbar";
 import { useMemo, useState } from "react";
 import {
   useAccount,
   useBalance,
-  useConnect,
   usePublicClient,
   useSwitchChain,
-  type Connector,
 } from "wagmi";
 import { USDC_ADDRESS, arc } from "@/lib/arc";
-import { friendlyError } from "@/lib/errors";
 import { fetchSenderOverview, type SenderPayment } from "@/lib/events";
 import { shortAddress } from "@/lib/format";
 import { isValidHandle, normalizeHandle } from "@/lib/handles";
@@ -91,7 +89,6 @@ function buildSpark(values: number[]): { line: string; area: string } | null {
 
 export function HomeDashboard() {
   const { address, isConnected, chainId } = useAccount();
-  const { connectors, connectAsync, isPending: connecting } = useConnect();
   const { switchChain, isPending: switching } = useSwitchChain();
   const publicClient = usePublicClient();
   const { data: session } = useSession();
@@ -99,7 +96,6 @@ export function HomeDashboard() {
 
   const [currency, setCurrency] = useState("NGN");
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [connectError, setConnectError] = useState<string | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -131,16 +127,6 @@ export function HomeDashboard() {
   });
 
   const payments = overview?.payments;
-
-  const uniqueConnectors = useMemo(() => {
-    const seen = new Set<string>();
-    return connectors.filter((connector) => {
-      const key = connector.name.toLowerCase();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }, [connectors]);
 
   const currencyOptions = useMemo(() => {
     if (!rateData) return POPULAR;
@@ -201,17 +187,6 @@ export function HomeDashboard() {
         setTimeout(() => setCopied(null), 2000);
       }
     } catch {
-      setConnectError("Could not copy to clipboard.");
-    }
-  }
-
-  async function handleConnect(connector: Connector) {
-    setConnectError(null);
-    try {
-      await connectAsync({ connector });
-      setPickerOpen(false);
-    } catch (error) {
-      setConnectError(friendlyError(error));
     }
   }
 
@@ -733,50 +708,7 @@ export function HomeDashboard() {
       ) : null}
 
       {/* Connect wallet modal */}
-      {pickerOpen ? (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-inverse-surface/40 backdrop-blur-sm p-space-md"
-          onClick={() => setPickerOpen(false)}
-        >
-          <div
-            className="w-full max-w-sm bg-surface-container-lowest rounded-lg shadow-[0_20px_32px_-8px_rgba(26,24,22,0.18)] p-space-lg flex flex-col gap-space-sm"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <span className="font-headline-sm text-headline-sm text-on-surface">Connect a wallet</span>
-              <button
-                onClick={() => setPickerOpen(false)}
-                className="w-8 h-8 rounded-full hover:bg-surface-container flex items-center justify-center text-on-surface-variant"
-              >
-                <span className="material-symbols-outlined text-[18px]">close</span>
-              </button>
-            </div>
-            {uniqueConnectors.length === 0 ? (
-              <p className="font-body-sm text-body-sm text-on-surface-variant">No wallets detected.</p>
-            ) : (
-              uniqueConnectors.map((connector) => (
-                <button
-                  key={connector.id}
-                  onClick={() => handleConnect(connector)}
-                  disabled={connecting}
-                  className="flex items-center gap-3 rounded-lg px-3 py-3 text-left hover:bg-surface-container-low transition-colors disabled:opacity-50"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-container text-[11px] font-bold uppercase">
-                    {connector.name.slice(0, 1)}
-                  </span>
-                  <span className="font-body-md text-body-md text-on-surface">
-                    {connector.name}
-                    {connector.name.toLowerCase().includes("zerion") ? " · recommended" : ""}
-                  </span>
-                </button>
-              ))
-            )}
-            {connectError ? (
-              <p className="font-body-sm text-body-sm text-error">{connectError}</p>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
+      <WalletModal open={pickerOpen} onClose={() => setPickerOpen(false)} />
 
       {/* Tumi chat + launcher */}
       <div
