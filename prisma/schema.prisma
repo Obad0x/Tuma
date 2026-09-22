@@ -3,7 +3,10 @@
 // The app works without a database too — it falls back to reading the chain.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // Include the Linux target used by Vercel (Amazon Linux / RHEL) so the query
+  // engine is present at runtime, not just the local dev target.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
