@@ -1,13 +1,14 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useAccount, useBalance, useDisconnect, usePublicClient } from "wagmi";
 import { AppShell } from "./app-shell";
 import { QrCard } from "./qr-card";
 import { WalletModal } from "./wallet-modal";
+import { useSignOutAndDisconnect } from "@/lib/use-sign-out";
 import { ARC_EXPLORER, USDC_ADDRESS, arc } from "@/lib/arc";
 import { fetchSenderPayments } from "@/lib/events";
 import { shortAddress } from "@/lib/format";
@@ -34,6 +35,7 @@ export function ProfileView() {
   const { address, isConnected, chainId } = useAccount();
   const { disconnect } = useDisconnect();
   const publicClient = usePublicClient();
+  const signOutAndDisconnect = useSignOutAndDisconnect();
 
   const stored = useSyncExternalStore(subscribeProfile, getProfileSnapshot, getServerProfileSnapshot);
   const [draft, setDraft] = useState<Partial<ProfileSettings> | null>(null);
@@ -153,24 +155,11 @@ export function ProfileView() {
 
   async function handleSignOut() {
     resetProfile();
-    await signOut({ callbackUrl: "/" });
+    await signOutAndDisconnect("/");
   }
 
   return (
-    <AppShell
-      active="profile"
-      footer={
-        <div className="rounded-lg bg-surface-container-lowest p-4 shadow-sm">
-          <span className="text-[11px] uppercase tracking-wide text-on-surface-variant">
-            Preferred currency
-          </span>
-          <div className="mt-1 flex items-center justify-between">
-            <span className="text-sm font-semibold text-on-surface">{merged.currency}</span>
-            <span className="text-xs font-bold text-primary">Default</span>
-          </div>
-        </div>
-      }
-    >
+    <AppShell active="profile">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

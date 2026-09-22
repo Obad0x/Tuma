@@ -24,7 +24,7 @@ export default function Providers({ children }: { children: ReactNode }) {
 
   return (
     <SessionProvider>
-      <WagmiProvider config={wagmiConfig}>
+      <WagmiProvider config={wagmiConfig} reconnectOnMount={false}>
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
       </WagmiProvider>
     </SessionProvider>

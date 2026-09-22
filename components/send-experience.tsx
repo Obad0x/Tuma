@@ -2,9 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { AppNav } from "./app-nav";
+import { AppShell } from "./app-shell";
 import { WalletModal } from "./wallet-modal";
-import { MobileTabBar } from "./mobile-tabbar";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { parseEventLogs, parseUnits } from "viem";
@@ -261,52 +260,8 @@ export function SendExperience() {
   }
 
   return (
-    <div className="bg-background font-body-md text-body-md text-on-surface min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 hidden flex-col justify-between lg:flex py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <AppNav active="send" />
-        <div className="px-space-md">
-          <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] flex flex-col gap-space-xs">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Live rate</span>
-            <div className="flex items-center justify-between">
-              <span className="font-headline-sm text-headline-sm text-on-surface">USDC / {currency}</span>
-              <span className="font-label-md text-label-md text-primary font-bold">{rate ? formatFiat(rate) : "—"}</span>
-            </div>
-            <span className="font-body-sm text-body-sm text-on-surface-variant">Escrow protects every send</span>
-          </div>
-        </div>
-      </aside>
-
-      <div className="flex min-h-screen flex-col lg:pl-64">
-        {/* Header */}
-        <header className="fixed left-0 right-0 top-0 lg:left-64 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-          <div className="w-full h-20 px-space-xl flex items-center justify-between">
-            <div className="flex items-center gap-space-xs bg-surface-container px-space-md py-space-xs rounded-full">
-              <span className="w-2 h-2 rounded-full bg-primary"></span>
-              <span className="font-label-sm text-label-sm text-on-surface">
-                FX Live: 1 USD = {rate ? formatFiat(rate) : "…"} {currency}
-              </span>
-            </div>
-            <div className="flex items-center gap-space-md">
-              <div className="flex items-center gap-space-sm bg-surface-container-lowest px-space-md py-space-xs rounded-full shadow-[0_4px_12px_rgba(26,24,22,0.03)]">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Balance</span>
-                <span className="font-headline-sm text-headline-sm text-on-surface">{balanceText ? `${balanceText} USDC` : "—"}</span>
-              </div>
-              {ready ? (
-                <Link href="/profile" className="rounded-full border border-surface-container-high text-on-surface px-space-md py-space-xs font-label-lg text-label-lg hover:bg-surface-container transition-colors">
-                  {shortAddress(address)}
-                </Link>
-              ) : (
-                <button onClick={() => setPickerOpen(true)} className="rounded-full bg-primary-container text-on-primary px-space-md py-space-xs font-label-lg text-label-lg shadow-sm hover:bg-primary transition-colors">
-                  Connect wallet
-                </button>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <main className="w-full pt-20 px-4 pb-28 lg:px-space-xl lg:pb-space-xl flex-1 bg-background">
-          <div className="flex flex-col w-full max-w-5xl mx-auto pb-12">
+    <AppShell active="send">
+      <div className="mx-auto flex w-full max-w-5xl flex-col pb-12">
             {!isEscrowConfigured ? (
               <div className="mb-space-lg rounded-lg bg-amber-50 border border-amber-200 p-space-md font-body-md text-body-md text-amber-900">
                 The escrow contract is not deployed yet. Set <code className="font-mono">NEXT_PUBLIC_ESCROW_ADDRESS</code> in <code className="font-mono">.env.local</code>.
@@ -413,13 +368,10 @@ export function SendExperience() {
               />
             ) : null}
           </div>
-        </main>
-      </div>
-      <MobileTabBar active="send" />
 
       {/* Connect modal */}
       <WalletModal open={pickerOpen} onClose={() => setPickerOpen(false)} />
-    </div>
+    </AppShell>
   );
 }
 

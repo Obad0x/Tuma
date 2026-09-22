@@ -3,9 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { AppNav } from "./app-nav";
+import { AppShell } from "./app-shell";
 import { WalletModal } from "./wallet-modal";
-import { MobileTabBar } from "./mobile-tabbar";
 import { useMemo, useState } from "react";
 import {
   useAccount,
@@ -195,55 +194,8 @@ export function HomeDashboard() {
   }on Tuma. You can send it to me here:`;
 
   return (
-    <div className="bg-background font-body-md text-body-md text-on-surface min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 hidden flex-col justify-between lg:flex py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <AppNav active="home" />
-      </aside>
-
-      <div className="flex min-h-screen flex-col lg:pl-64">
-        {/* Header */}
-        <header className="fixed left-0 right-0 top-0 lg:left-64 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-          <div className="w-full h-20 px-space-xl flex items-center justify-between">
-            <div className="flex items-center gap-space-md">
-              <div className="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-xs rounded-full text-on-surface-variant">
-                <span className="material-symbols-outlined text-[20px]">search</span>
-                <input
-                  className="bg-transparent border-0 outline-none text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm w-72"
-                  placeholder="Search recipients, transactions, tags..."
-                  type="text"
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-space-md">
-              <div className="flex items-center gap-space-sm bg-surface-container-lowest px-space-md py-space-xs rounded-full shadow-[0_4px_12px_rgba(26,24,22,0.03)]">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Balance</span>
-                <span className="font-headline-sm text-headline-sm text-on-surface">
-                  {usdcText ? `${usdcText} USDC` : "—"}
-                </span>
-              </div>
-              {isConnected ? (
-                <Link
-                  href="/profile"
-                  title="Profile"
-                  className="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[22px]">account_circle</span>
-                </Link>
-              ) : (
-                <button
-                  onClick={() => setPickerOpen(true)}
-                  className="rounded-full bg-primary-container text-on-primary px-space-md py-space-xs font-label-lg text-label-lg shadow-sm hover:bg-primary transition-colors"
-                >
-                  Connect wallet
-                </button>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <main className="w-full pt-20 px-4 pb-28 lg:px-space-xl lg:pb-space-xl flex-1 bg-background">
-          <div className="flex flex-col w-full max-w-7xl mx-auto space-y-space-lg">
+    <AppShell active="home">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
             {/* Greeting */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md pt-space-xs">
               <div className="flex flex-col">
@@ -617,9 +569,6 @@ export function HomeDashboard() {
               </div>
             </div>
           </div>
-        </main>
-      </div>
-      <MobileTabBar active="home" />
 
       {/* Request cash modal */}
       {requestOpen ? (
@@ -759,7 +708,7 @@ export function HomeDashboard() {
           <span className="material-symbols-outlined text-[28px]">smart_toy</span>
         </span>
       </button>
-    </div>
+    </AppShell>
   );
 }
 

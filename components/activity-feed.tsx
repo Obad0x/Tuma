@@ -2,19 +2,17 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { AppNav } from "./app-nav";
+import { AppShell } from "./app-shell";
 import { WalletModal } from "./wallet-modal";
-import { MobileTabBar } from "./mobile-tabbar";
 import { useMemo, useState } from "react";
 import {
   useAccount,
-  useBalance,
   usePublicClient,
   useSwitchChain,
   useWriteContract,
 } from "wagmi";
 import { TumaEscrowABI } from "@/lib/abi";
-import { ARC_EXPLORER, ESCROW_ADDRESS, USDC_ADDRESS, arc } from "@/lib/arc";
+import { ARC_EXPLORER, ESCROW_ADDRESS, arc } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
 import { fetchSenderOverview, type SenderPayment } from "@/lib/events";
 import { shortAddress } from "@/lib/format";
@@ -40,9 +38,6 @@ function statusMeta(payment: SenderPayment): { label: string; className: string;
   return { label: "Open", className: "bg-sky-50 text-sky-700", dot: "bg-sky-500" };
 }
 
-function trim(value: string): string {
-  return value.includes(".") ? value.replace(/(\.\d{1,4})\d*$/, "$1") : value;
-}
 
 function formatSpeed(seconds: number | undefined): string {
   if (seconds === undefined) return "—";
@@ -66,12 +61,6 @@ export function ActivityFeed() {
 
   const onArc = chainId === arc.id;
   const ready = isConnected && onArc;
-
-  const { data: balance } = useBalance({
-    address,
-    token: USDC_ADDRESS,
-    query: { enabled: !!address && onArc },
-  });
 
   const { data: overview, isLoading, refetch } = useQuery({
     queryKey: ["sender-overview", address, chainId],
@@ -209,50 +198,8 @@ export function ActivityFeed() {
   ];
 
   return (
-    <div className="bg-background font-body-md text-body-md text-on-surface min-h-screen antialiased selection:bg-primary-fixed selection:text-on-primary-fixed">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 hidden flex-col justify-between lg:flex py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-        <AppNav active="activity" />
-        <div className="px-space-md">
-          <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] flex flex-col gap-space-xs">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Escrow protected</span>
-            <div className="flex items-center justify-between">
-              <span className="font-headline-sm text-headline-sm text-on-surface">On Arc</span>
-              <span className="font-label-md text-label-md text-primary font-bold">{Number.isFinite(stats.settledRate) ? `${stats.settledRate}%` : "—"}</span>
-            </div>
-            <span className="font-body-sm text-body-sm text-on-surface-variant">Claimed of all payments</span>
-          </div>
-        </div>
-      </aside>
-
-      <div className="flex min-h-screen flex-col lg:pl-64">
-        {/* Header */}
-        <header className="fixed left-0 right-0 top-0 lg:left-64 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
-          <div className="w-full h-20 px-space-xl flex items-center justify-between">
-            <div className="flex items-center gap-space-xs bg-surface-container px-space-md py-space-xs rounded-full">
-              <span className="w-2 h-2 rounded-full bg-primary"></span>
-              <span className="font-label-sm text-label-sm text-on-surface">Activity · escrowed on {arc.name}</span>
-            </div>
-            <div className="flex items-center gap-space-md">
-              <div className="flex items-center gap-space-sm bg-surface-container-lowest px-space-md py-space-xs rounded-full shadow-[0_4px_12px_rgba(26,24,22,0.03)]">
-                <span className="font-label-sm text-label-sm text-on-surface-variant uppercase">Balance</span>
-                <span className="font-headline-sm text-headline-sm text-on-surface">{balance ? `${trim(balance.formatted)} USDC` : "—"}</span>
-              </div>
-              {ready ? (
-                <Link href="/profile" className="rounded-full border border-surface-container-high text-on-surface px-space-md py-space-xs font-label-lg text-label-lg hover:bg-surface-container transition-colors">
-                  {shortAddress(address)}
-                </Link>
-              ) : (
-                <button onClick={() => setPickerOpen(true)} className="rounded-full bg-primary-container text-on-primary px-space-md py-space-xs font-label-lg text-label-lg shadow-sm hover:bg-primary transition-colors">
-                  Connect wallet
-                </button>
-              )}
-            </div>
-          </div>
-        </header>
-
-        <main className="w-full pt-20 px-4 pb-28 lg:px-space-xl lg:pb-space-xl flex-1 bg-background">
-          <div className="flex flex-col w-full gap-space-lg">
+    <AppShell active="activity">
+      <div className="flex w-full flex-col gap-6">
             {/* Header */}
             <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-space-md">
               <div className="flex flex-col gap-space-xs">
@@ -437,9 +384,6 @@ export function ActivityFeed() {
               </div>
             )}
           </div>
-        </main>
-      </div>
-      <MobileTabBar active="activity" />
 
       {/* Toast */}
       <div className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-inverse-surface text-inverse-on-surface px-space-lg py-2.5 rounded-full font-label-md text-label-md shadow-2xl flex items-center gap-2 transition-all duration-300 ${toast ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
@@ -460,7 +404,7 @@ export function ActivityFeed() {
 
       {/* Connect modal */}
       <WalletModal open={pickerOpen} onClose={() => setPickerOpen(false)} />
-    </div>
+    </AppShell>
   );
 }
 

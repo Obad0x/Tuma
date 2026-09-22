@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { isAddress } from "viem";
@@ -9,6 +9,7 @@ import { useAccount } from "wagmi";
 import { ARC_EXPLORER } from "@/lib/arc";
 import type { PaymentView } from "@/lib/chain";
 import { shortAddress } from "@/lib/format";
+import { useSignOutAndDisconnect } from "@/lib/use-sign-out";
 import { WalletModal } from "./wallet-modal";
 
 const X_LOGO = "𝕏";
@@ -41,6 +42,7 @@ export function ClaimExperience({
 }) {
   const { data: session, status: sessionStatus } = useSession();
   const { address, isConnected } = useAccount();
+  const signOutAndDisconnect = useSignOutAndDisconnect();
 
   const [recipient, setRecipient] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -104,7 +106,7 @@ export function ClaimExperience({
           </Link>
           <div className="flex items-center gap-space-md">
             {username ? (
-              <button onClick={() => signOut({ callbackUrl: window.location.href })} className="rounded-full bg-surface-container px-space-md py-space-sm font-label-lg text-label-lg text-on-surface hover:bg-surface-container-high transition-colors">
+              <button onClick={() => signOutAndDisconnect(window.location.href)} className="rounded-full bg-surface-container px-space-md py-space-sm font-label-lg text-label-lg text-on-surface hover:bg-surface-container-high transition-colors">
                 @{username} · sign out
               </button>
             ) : (
@@ -398,6 +400,7 @@ function SignInState({ payment }: { payment: PaymentView }) {
 }
 
 function WrongAccountState({ payment, username }: { payment: PaymentView; username: string }) {
+  const signOutAndDisconnect = useSignOutAndDisconnect();
   return (
     <Card>
       <div className="flex flex-col items-center text-center gap-space-sm">
@@ -408,7 +411,7 @@ function WrongAccountState({ payment, username }: { payment: PaymentView; userna
         <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">
           You are signed in as <strong>@{username}</strong> but this payment is for <strong>@{payment.handle}</strong>.
         </p>
-        <button onClick={() => signOut({ callbackUrl: window.location.href })} className="mt-space-sm rounded-full bg-primary-container text-on-primary px-space-lg py-space-md font-label-lg text-label-lg hover:bg-primary transition-colors">
+        <button onClick={() => signOutAndDisconnect(window.location.href)} className="mt-space-sm rounded-full bg-primary-container text-on-primary px-space-lg py-space-md font-label-lg text-label-lg hover:bg-primary transition-colors">
           Sign out and switch account
         </button>
       </div>

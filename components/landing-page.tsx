@@ -5,7 +5,7 @@
  * Copy is written around the real product: send USDC to an X handle on Arc,
  * held in escrow, claimed with one login. Tailwind scans this file.
  */
-const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(26,24,22,0.03)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><a class="flex items-center gap-space-sm focus:outline-none" data-path="home" href="/"><img alt="Tuma logo" class="h-8 w-auto object-contain" src="/images/tuma-logo.jpg"><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">Tuma</span></a><nav class="hidden lg:flex items-center gap-space-lg"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">How it works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Product</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Security</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></nav></div><div class="flex items-center gap-space-md"><a class="hidden sm:inline-flex items-center justify-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-full transition-colors" href="/dashboard">Open app</a><a class="inline-flex items-center justify-center font-label-lg text-label-lg text-on-primary bg-primary-container hover:bg-primary shadow-[0_4px_0_#b52603] active:translate-y-[2px] active:shadow-[0_2px_0_#b52603] px-space-lg py-space-sm rounded-full transition-all" href="/send">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1"><div class="flex flex-col w-full">
+const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(26,24,22,0.03)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><input id="tuma-nav" type="checkbox" class="peer hidden" /><a class="flex items-center gap-space-sm focus:outline-none" data-path="home" href="/"><img alt="Tuma logo" class="h-8 w-auto object-contain" src="/images/tuma-logo.jpg"><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">Tuma</span></a><nav class="hidden peer-checked:flex flex-col absolute top-20 left-0 w-full gap-3 border-b border-surface-container bg-surface px-6 py-4 shadow-lg lg:static lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-space-lg lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">How it works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Product</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Security</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></nav></div><div class="flex items-center gap-space-md"><label for="tuma-nav" aria-label="Menu" class="lg:hidden inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined">menu</span></label><a class="hidden sm:inline-flex items-center justify-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-full transition-colors" href="/dashboard">Open app</a><a class="inline-flex items-center justify-center font-label-lg text-label-lg text-on-primary bg-primary-container hover:bg-primary shadow-[0_4px_0_#b52603] active:translate-y-[2px] active:shadow-[0_2px_0_#b52603] px-space-lg py-space-sm rounded-full transition-all" href="/send">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1"><div class="flex flex-col w-full">
 <!-- Top Ambient Glow Field -->
 <div class="relative w-full overflow-hidden">
 <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[780px] h-[520px] bg-gradient-to-b from-primary-fixed/40 via-secondary-fixed/20 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
@@ -22,7 +22,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Escrowed on-chain • Claim with one 𝕏 login • No wallet needed</span>
 </div>
 <!-- Main Hero Display Headline -->
-<h1 class="font-display-hero text-display-hero text-on-surface tracking-tight leading-[1.08] max-w-2xl">
+<h1 class="font-display-hero text-display-hero-mobile lg:text-display-hero text-on-surface tracking-tight leading-[1.08] max-w-2xl">
             Send USDC to any <span class="text-primary-container relative inline-block">𝕏 handle<svg class="absolute -bottom-2 left-0 w-full text-secondary-container h-2.5 pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 160 12"><path d="M2 9.5C40 2 120 2 158 9.5" stroke="currentColor" stroke-linecap="round" stroke-width="4"></path></svg></span>.
           </h1>
 <!-- Hero Subtitle -->
@@ -253,7 +253,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-md text-label-md font-bold mb-4">
 <span class="">THE TUMA EXPERIENCE</span>
 </div>
-<h2 class="font-display-hero text-display-hero text-on-surface tracking-tight leading-tight">
+<h2 class="font-display-hero text-display-hero-mobile lg:text-display-hero text-on-surface tracking-tight leading-tight">
           Your wallet, your payments,<br>live rates.
         </h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mt-4">
@@ -581,7 +581,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <span class="w-2 h-2 rounded-full bg-on-primary"></span>
 <span class="">Start sending in 2 minutes</span>
 </div>
-<h2 class="font-display-hero text-display-hero font-extrabold tracking-tight mb-6">
+<h2 class="font-display-hero text-display-hero-mobile lg:text-display-hero font-extrabold tracking-tight mb-6">
           Ready to send money to an 𝕏 handle?
         </h2>
 <p class="font-body-lg text-body-lg text-on-primary/90 max-w-xl mb-8 leading-relaxed">
@@ -608,7 +608,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 export function LandingPage() {
   return (
     <div
-      className="min-h-screen flex flex-col bg-background font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
+      className="min-h-screen flex flex-col overflow-x-hidden bg-background font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
       dangerouslySetInnerHTML={{ __html: LANDING_HTML }}
     />
   );
