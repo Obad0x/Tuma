@@ -52,13 +52,14 @@ export async function getSystemStatus(): Promise<SystemCheck[]> {
 
   const db = getDb();
   if (!db) {
-    checks.push({ name: "Database", status: "degraded", detail: "not configured" });
+    checks.push({ name: "Database", status: "degraded", detail: "DATABASE_URL not set" });
   } else {
     try {
       await db.$queryRaw`SELECT 1`;
       checks.push({ name: "Database", status: "operational", detail: "connected" });
-    } catch {
-      checks.push({ name: "Database", status: "down", detail: "query failed" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message.split("\n")[0] : "query failed";
+      checks.push({ name: "Database", status: "down", detail: message.slice(0, 140) });
     }
   }
 
