@@ -1,17 +1,35 @@
 import { PrismaClient } from "@prisma/client";
 
-/// Resolve the database URL from any of the common names that hosting
-/// integrations inject (Vercel Prisma Postgres sets `DATABASE_URL`, but some
-/// setups expose `PRISMA_DATABASE_URL`, `POSTGRES_URL`, etc.).
-export const databaseUrl =
-  process.env.DATABASE_URL ||
-  process.env.PRISMA_DATABASE_URL ||
-  process.env.POSTGRES_URL ||
-  process.env.POSTGRES_PRISMA_URL ||
-  process.env.POSTGRES_URL_NON_POOLING ||
-  undefined;
+/// Resolve the database URL robustly. Hosting integrations inject it under
+/// different names depending on the prefix the user chose (DATABASE_URL,
+/// POSTGRES_URL, POSTGRES_PRISMA_URL, MY_PREFIX_DATABASE_URL, ...). We first
+/// check the well-known names, then fall back to scanning the environment for
+/// any value that looks like a Postgres connection string.
+function resolveDatabaseUrl(): { url?: string; source?: string } {
+  const preferred = [
+    "DATABASE_URL",
+    "PRISMA_DATABASE_URL",
+    "POSTGRES_URL",
+    "POSTGRES_PRISMA_URL",
+    "POSTGRES_URL_NON_POOLING",
+  ];
+  for (const key of preferred) {
+    const value = process.env[key];
+    if (value && /^postgres(ql)?:\/\//.test(value)) return { url: value, source: key };
+  }
 
-/// The app is fully functional without a database (it reads the chain directly).
+  for (const [key, value] of Object.entries(process.env)) {
+    if (typeof value === "string" && /^postgres(ql)?:\/\//.test(value)) {
+      return { url: value, source: key };
+    }
+  }
+  return {};
+}
+
+const resolved = resolveDatabaseUrl();
+
+export const databaseUrl = resolved.url;
+export const databaseUrlSource = resolved.source;
 export const dbEnabled = Boolean(databaseUrl);
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };

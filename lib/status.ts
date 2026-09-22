@@ -1,7 +1,7 @@
 import { createPublicClient, http } from "viem";
 import { TumaEscrowABI } from "./abi";
 import { ESCROW_ADDRESS, arc, isEscrowConfigured } from "./arc";
-import { getDb } from "./db";
+import { getDb, databaseUrlSource } from "./db";
 
 export type CheckStatus = "operational" | "degraded" | "down";
 export type SystemCheck = { name: string; status: CheckStatus; detail: string };
@@ -52,11 +52,15 @@ export async function getSystemStatus(): Promise<SystemCheck[]> {
 
   const db = getDb();
   if (!db) {
-    checks.push({ name: "Database", status: "degraded", detail: "DATABASE_URL not set" });
+    checks.push({ name: "Database", status: "degraded", detail: "no Postgres URL found in environment" });
   } else {
     try {
       await db.$queryRaw`SELECT 1`;
-      checks.push({ name: "Database", status: "operational", detail: "connected" });
+      checks.push({
+        name: "Database",
+        status: "operational",
+        detail: databaseUrlSource ? `connected via ${databaseUrlSource}` : "connected",
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message.split("\n")[0] : "query failed";
       checks.push({ name: "Database", status: "down", detail: message.slice(0, 140) });
