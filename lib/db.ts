@@ -1,15 +1,25 @@
 import { PrismaClient } from "@prisma/client";
 
+/// Resolve the database URL from any of the common names that hosting
+/// integrations inject (Vercel Prisma Postgres sets `DATABASE_URL`, but some
+/// setups expose `PRISMA_DATABASE_URL`, `POSTGRES_URL`, etc.).
+export const databaseUrl =
+  process.env.DATABASE_URL ||
+  process.env.PRISMA_DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.POSTGRES_PRISMA_URL ||
+  process.env.POSTGRES_URL_NON_POOLING ||
+  undefined;
+
 /// The app is fully functional without a database (it reads the chain directly).
-/// Set DATABASE_URL to enable persistence of users, payments and tx hashes.
-export const dbEnabled = Boolean(process.env.DATABASE_URL);
+export const dbEnabled = Boolean(databaseUrl);
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 export function getDb(): PrismaClient | null {
-  if (!dbEnabled) return null;
+  if (!databaseUrl) return null;
   if (!globalForPrisma.prisma) {
-    globalForPrisma.prisma = new PrismaClient();
+    globalForPrisma.prisma = new PrismaClient({ datasourceUrl: databaseUrl });
   }
   return globalForPrisma.prisma;
 }
