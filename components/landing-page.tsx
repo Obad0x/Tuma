@@ -18,7 +18,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="lg:col-span-7 flex flex-col items-start space-y-6 text-left">
 <!-- Trust Badge -->
 <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-surface-container shadow-sm border-0 hover:bg-surface-container-high transition-colors">
-<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
 <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Escrowed on-chain • Claim with one 𝕏 login • No wallet needed</span>
 </div>
 <!-- Main Hero Display Headline -->
@@ -70,7 +70,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <img alt="Tumi the friendly mascot delivering a USDC payment to an X handle" class="w-72 h-72 sm:w-84 sm:h-84 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-300" src="/images/tumi-hero.jpg">
 </div>
 <!-- Floating Pill 1: Claim Notification -->
-<div class="absolute -top-4 -left-4 sm:-left-8 z-20 bg-surface-container-lowest p-3.5 pr-5 rounded-2xl shadow-[0_12px_28px_-6px_rgba(26,24,22,0.12)] flex items-center gap-3 animate-bounce" style="animation-duration: 4s;">
+<div class="absolute -top-4 -left-4 sm:-left-8 z-20 bg-surface-container-lowest p-3.5 pr-5 rounded-2xl shadow-[0_12px_28px_-6px_rgba(26,24,22,0.12)] flex items-center gap-3" style="animation-duration: 4s;">
 <img alt="A Tuma recipient" class="w-10 h-10 rounded-full object-cover" src="/images/avatar.jpg">
 <div class="flex flex-col">
 <span class="font-label-sm text-label-sm text-on-surface-variant">Claimed with one login</span>
@@ -121,19 +121,19 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <span class="font-label-sm text-label-sm text-on-surface font-semibold">Sign in with X</span>
 </div>
 <div class="inline-flex items-center gap-2 bg-surface px-3.5 py-2 rounded-full shadow-sm">
-<span class="text-[16px]">🔒</span>
+<span class="text-[16px]"></span>
 <span class="font-label-sm text-label-sm text-on-surface font-semibold">On-chain escrow</span>
 </div>
 <div class="inline-flex items-center gap-2 bg-surface px-3.5 py-2 rounded-full shadow-sm">
-<span class="text-[16px]">⚡</span>
+<span class="text-[16px]"></span>
 <span class="font-label-sm text-label-sm text-on-surface font-semibold">Instant settlement</span>
 </div>
 <div class="inline-flex items-center gap-2 bg-surface px-3.5 py-2 rounded-full shadow-sm">
-<span class="text-[16px]">↩️</span>
+<span class="text-[16px]"></span>
 <span class="font-label-sm text-label-sm text-on-surface font-semibold">30-day refunds</span>
 </div>
 <div class="inline-flex items-center gap-2 bg-surface px-3.5 py-2 rounded-full shadow-sm">
-<span class="text-[16px]">👛</span>
+<span class="text-[16px]"></span>
 <span class="font-label-sm text-label-sm text-on-surface font-semibold">No wallet needed</span>
 </div>
 </div>
@@ -405,7 +405,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="flex items-center justify-between">
 <input class="font-headline-lg text-headline-lg font-extrabold text-on-surface bg-transparent focus:outline-none w-3/5" type="text" value="25.00" readonly>
 <div class="flex items-center gap-1.5 bg-surface-container px-3 py-1.5 rounded-full font-label-md text-label-md font-bold text-on-surface">
-<span class="">💵 USDC</span>
+<span class="">USDC</span>
 </div>
 </div>
 </div>
@@ -578,7 +578,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-secondary-fixed/20 blur-3xl pointer-events-none"></div>
 <div class="relative z-10 max-w-3xl mx-auto flex flex-col items-center">
 <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container-lowest/20 backdrop-blur-md font-label-md text-label-md font-bold mb-6">
-<span class="w-2 h-2 rounded-full bg-on-primary animate-ping"></span>
+<span class="w-2 h-2 rounded-full bg-on-primary"></span>
 <span class="">Start sending in 2 minutes</span>
 </div>
 <h2 class="font-display-hero text-display-hero font-extrabold tracking-tight mb-6">

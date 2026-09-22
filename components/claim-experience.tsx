@@ -305,10 +305,10 @@ function ClaimCard({
           </span>
         </div>
         <div className="inline-flex items-center gap-1.5 px-space-md py-1 bg-secondary-fixed/30 text-on-secondary-fixed-variant rounded-full font-label-sm text-label-sm mb-space-sm">
-          <span className="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+          <span className="w-2 h-2 rounded-full bg-secondary-container"></span>
           Waiting to be claimed
         </div>
-        <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-space-xs">Someone sent you money! 🎉</h1>
+        <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-space-xs">Someone sent you money!</h1>
         <p className="font-body-md text-body-md text-on-surface-variant max-w-sm">This transfer is escrowed on Arc and ready to settle to your wallet.</p>
       </div>
 
@@ -425,7 +425,7 @@ function SuccessState({ amount, handle, target, txHash }: { amount: string; hand
     <Card>
       <div className="text-center relative overflow-hidden">
         <div className="w-28 h-28 mx-auto relative mb-space-md flex items-center justify-center">
-          <div className="absolute inset-0 bg-secondary-container/20 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute inset-0 bg-secondary-container/20 rounded-full blur-xl"></div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img alt="Tumi celebrating" className="w-full h-full object-contain relative z-10" src="/images/tumi-curious.jpg" />
         </div>
@@ -433,7 +433,7 @@ function SuccessState({ amount, handle, target, txHash }: { amount: string; hand
           <span className="material-symbols-outlined text-[16px] text-secondary">verified</span>
           Instant settlement confirmed
         </div>
-        <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-space-xs">Money claimed! 🎉</h2>
+        <h2 className="font-headline-lg text-headline-lg text-on-surface tracking-tight mb-space-xs">Money claimed!</h2>
         <p className="font-body-md text-body-md text-on-surface-variant max-w-sm mx-auto mb-space-lg">
           {amount} USDC was released to <span className="font-mono">{shortAddress(target, 4)}</span> from @{handle}&apos;s payment.
         </p>

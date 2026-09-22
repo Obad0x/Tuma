@@ -305,7 +305,7 @@ export function SendExperience() {
         <header className="fixed left-0 right-0 top-0 lg:left-64 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
           <div className="w-full h-20 px-space-xl flex items-center justify-between">
             <div className="flex items-center gap-space-xs bg-surface-container px-space-md py-space-xs rounded-full">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-primary"></span>
               <span className="font-label-sm text-label-sm text-on-surface">
                 FX Live: 1 USD = {rate ? formatFiat(rate) : "…"} {currency}
               </span>
@@ -576,7 +576,7 @@ function StepRecipient({
           <div className="flex items-center justify-between px-space-xs">
             <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant font-bold">Selected destination</span>
             <span className="font-label-sm text-label-sm text-primary font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> {X_LOGO} handle
+              <span className="w-1.5 h-1.5 rounded-full bg-primary"></span> {X_LOGO} handle
             </span>
           </div>
           <div className="relative bg-surface-container-lowest rounded-2xl p-space-lg shadow-[0_20px_32px_-8px_rgba(255,90,54,0.12),0_8px_16px_-4px_rgba(26,24,22,0.03)] bg-gradient-to-r from-surface-container-lowest via-primary-fixed/20 to-surface-container-lowest">
@@ -718,7 +718,7 @@ function StepAmount({
   onContinue: () => void;
   canContinue: boolean;
 }) {
-  const TAG_OPTIONS = ["🍕 Lunch", "🎁 Gift", "💡 Bills", "❤️ Love", "🎈 Celebration"];
+  const TAG_OPTIONS = ["Lunch", "Gift", "Bills", "Love", "Celebration"];
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
       <div className="lg:col-span-7 flex flex-col gap-space-md">
@@ -752,7 +752,7 @@ function StepAmount({
               className="font-display-hero text-display-hero tracking-tight font-black text-primary bg-transparent text-center outline-none w-full max-w-[280px]"
             />
             <span className="font-headline-md text-headline-md text-on-surface-variant font-bold">USDC</span>
-            <span className="w-1 h-10 bg-primary-container animate-pulse rounded-full ml-1"></span>
+            <span className="w-1 h-10 bg-primary-container rounded-full ml-1"></span>
           </div>
           <div className="flex items-center gap-2 bg-surface-container-low px-space-md py-space-xs rounded-full mt-space-xs mb-space-lg">
             <span className="w-2 h-2 rounded-full bg-[#1b873f]"></span>
@@ -1070,7 +1070,7 @@ function StepSent({
         <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-primary-fixed/30 blur-3xl pointer-events-none"></div>
         <div className="relative z-10 flex flex-col items-center">
           <div className="relative w-40 h-40 flex items-center justify-center">
-            <div className="absolute inset-2 rounded-full bg-surface-container scale-95 animate-pulse"></div>
+            <div className="absolute inset-2 rounded-full bg-surface-container scale-95"></div>
             <span className="relative z-10 material-symbols-outlined text-[96px] text-secondary">celebration</span>
           </div>
           <div className="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-secondary-fixed/50 text-on-secondary-fixed font-label-md text-label-md uppercase tracking-wider mb-space-xs">
@@ -1096,7 +1096,7 @@ function StepSent({
             </div>
           ) : null}
           <a href={`${ARC_EXPLORER}/tx/${result.txHash}`} target="_blank" rel="noopener noreferrer" className="mt-space-md inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-highest/60 text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface transition-colors">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span className="w-2 h-2 rounded-full bg-primary"></span>
             <span>View deposit on Arc Explorer</span>
           </a>
         </div>

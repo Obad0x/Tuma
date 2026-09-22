@@ -50,21 +50,25 @@ app/                    Next.js routes
   dashboard/page.tsx    /dashboard   Wallet, live rates, activity
   send/page.tsx         /send        4-step send wizard (recipient → amount → review → sent)
   payments/page.tsx     /payments    Activity feed + receipts + refunds
-  profile/page.tsx      /profile     Profile & settings (localStorage)
-  settings/page.tsx     /settings    Account, security, notifications, privacy
+  profile/page.tsx      /profile     Profile, avatar upload, payment QR
+  support/page.tsx      /support     Support tickets (create, list, reply)
+  status/page.tsx       /status      Live system health
+  legal/[slug]/page.tsx /legal/*     Privacy, Terms, AML, Consumer Disclosure
+  ops-9f2c7a/page.tsx   (secret)     Admin console (gated by ADMIN_SECRET)
   claim/[id]/page.tsx   /claim/[id]  Claim (OAuth gate → release → success)
-  (app)/admin/page.tsx  /admin       Protocol dashboard + operator tools
-  api/claim/route.ts    POST /api/claim  (operator release)
-  api/rates/route.ts    GET  /api/rates  (free USD FX rates)
-  api/auth/[...nextauth]/route.ts
-components/             Client UI (landing, dashboard, send wizard, activity, claim panel, admin, wallet button)
-lib/                    arc chain config, ABIs, chain reads, event/admin queries, helpers
+  api/...                            claim, payments, indexer, tickets, profile, upload, rates, admin
+components/             Client UI (landing, dashboard, send, activity, profile, support, wallet modal, QR, admin)
+lib/                    arc config, ABIs, chain reads, ledger/db, tickets, storage, status, legal, helpers
 auth.ts                 Auth.js config (X username + id into the session)
 types/                  next-auth type augmentation
 contracts/              Hardhat project (contract, tests, deploy script)
 docs/SETUP.md           Step-by-step setup (X developer app, env, wallets)
 docs/DEMO.md            90-second demo script + judge talking points
 ```
+
+> **Admin console:** deliberately non-guessable route `app/ops-9f2c7a` (rename the folder to
+> rotate it). It requires `ADMIN_SECRET`; the future admin subdomain can point at the same
+> route or consume the `/api/admin/*` endpoints with the secret header.
 
 Wallets: injected wallets via EIP-6963, an explicit **Zerion** target, and WalletConnect
 (set `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`) for mobile — including Zerion mobile.

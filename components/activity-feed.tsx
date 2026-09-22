@@ -243,7 +243,7 @@ export function ActivityFeed() {
         <header className="fixed left-0 right-0 top-0 lg:left-64 h-20 bg-surface/80 backdrop-blur-xl z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
           <div className="w-full h-20 px-space-xl flex items-center justify-between">
             <div className="flex items-center gap-space-xs bg-surface-container px-space-md py-space-xs rounded-full">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-primary"></span>
               <span className="font-label-sm text-label-sm text-on-surface">Activity · escrowed on {arc.name}</span>
             </div>
             <div className="flex items-center gap-space-md">
@@ -401,7 +401,7 @@ export function ActivityFeed() {
                   <div className="bg-surface-container-lowest p-space-lg rounded-lg shadow-[0_4px_20px_rgba(26,24,22,0.03)] flex flex-col gap-space-md">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-space-sm">
-                        <span className="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></span>
+                        <span className="w-3 h-3 rounded-full bg-emerald-500"></span>
                         <span className="font-label-lg text-label-lg text-on-surface font-bold">Settlement telemetry</span>
                       </div>
                       <span className="font-label-sm text-label-sm text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">{speedsList.length} claimed</span>

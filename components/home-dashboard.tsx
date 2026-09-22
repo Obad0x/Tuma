@@ -224,22 +224,6 @@ export function HomeDashboard() {
       {/* Sidebar */}
       <aside className="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 hidden flex-col justify-between lg:flex py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <AppNav active="home" />
-        <div className="px-space-md">
-          <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.04)] flex flex-col gap-space-xs">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">
-              Live rate
-            </span>
-            <div className="flex items-center justify-between">
-              <span className="font-headline-sm text-headline-sm text-on-surface">USD / {currency}</span>
-              <span className="font-label-md text-label-md text-primary font-bold">
-                {rate ? formatFiat(rate) : "—"}
-              </span>
-            </div>
-            <span className="font-body-sm text-body-sm text-on-surface-variant">
-              Powered by live FX · USDC ≈ USD
-            </span>
-          </div>
-        </div>
       </aside>
 
       <div className="flex min-h-screen flex-col lg:pl-64">
@@ -254,12 +238,6 @@ export function HomeDashboard() {
                   placeholder="Search recipients, transactions, tags..."
                   type="text"
                 />
-              </div>
-              <div className="hidden xl:flex items-center gap-space-xs bg-surface-container px-space-md py-space-xs rounded-full">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                <span className="font-label-sm text-label-sm text-on-surface">
-                  FX Live: 1 USD = {rate ? formatFiat(rate) : "…"} {currency}
-                </span>
               </div>
             </div>
             <div className="flex items-center gap-space-md">
@@ -295,7 +273,7 @@ export function HomeDashboard() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md pt-space-xs">
               <div className="flex flex-col">
                 <h1 className="font-display-hero text-display-hero text-on-surface tracking-tight">
-                  Good evening{username ? `, ${username}` : ""} 👋
+                  Good evening{username ? `, ${username}` : ""}
                 </h1>
                 <p className="font-body-lg text-body-lg text-on-surface-variant mt-1">
                   Send money anywhere in the world in seconds — with just an {X_LOGO} handle.
@@ -312,7 +290,7 @@ export function HomeDashboard() {
                     Companion Mood
                   </span>
                   <span className="font-label-lg text-label-lg text-on-surface flex items-center gap-1">
-                    Tumi is ready to fly <span className="animate-bounce">🚀</span>
+                    Ready to send
                   </span>
                 </div>
               </div>
@@ -423,22 +401,15 @@ export function HomeDashboard() {
                       rocket_launch
                     </span>
                     <span>Send money</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-surface-container-lowest ml-1 animate-ping"></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-surface-container-lowest ml-1"></span>
                   </Link>
-                  <div className="sm:col-span-5 grid grid-cols-2 gap-space-sm">
+                  <div className="sm:col-span-5">
                     <button
                       onClick={openRequest}
-                      className="flex items-center justify-center gap-space-xs bg-surface-container-lowest hover:bg-surface-container text-on-surface py-space-md px-space-sm rounded-full font-label-lg text-label-lg transition-all shadow-[0_10px_25px_-5px_rgba(26,24,22,0.03)]"
+                      className="w-full flex items-center justify-center gap-space-xs bg-surface-container-lowest hover:bg-surface-container text-on-surface py-space-md px-space-sm rounded-full font-label-lg text-label-lg transition-all shadow-[0_10px_25px_-5px_rgba(26,24,22,0.03)]"
                     >
                       <span className="material-symbols-outlined text-[18px]">call_received</span>
                       <span>Request</span>
-                    </button>
-                    <button
-                      onClick={() => setCurrency((current) => (current === "NGN" ? "KES" : "NGN"))}
-                      className="flex items-center justify-center gap-space-xs bg-surface-container-lowest hover:bg-surface-container text-on-surface py-space-md px-space-sm rounded-full font-label-lg text-label-lg transition-all shadow-[0_10px_25px_-5px_rgba(26,24,22,0.03)]"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">swap_horiz</span>
-                      <span>Swap rate</span>
                     </button>
                   </div>
                 </div>
@@ -588,28 +559,6 @@ export function HomeDashboard() {
 
               {/* Right rail */}
               <div className="lg:col-span-4 flex flex-col gap-space-md">
-                {/* Tumi insight */}
-                <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.03)] relative overflow-hidden">
-                  <div className="flex items-start gap-space-sm">
-                    <div className="w-12 h-12 rounded-full bg-secondary-fixed shrink-0 flex items-center justify-center text-secondary overflow-hidden">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img alt="Tumi Mascot Helper" className="w-full h-full object-cover" src={TUMI_WAVING} />
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="flex items-center gap-1">
-                        <span className="font-label-lg text-label-lg text-on-surface font-bold">Tumi insight</span>
-                        <span className="font-label-sm text-label-sm text-primary bg-primary-fixed px-1.5 py-0.5 rounded">
-                          Live tip
-                        </span>
-                      </div>
-                      <p className="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-relaxed">
-                        Send to anywhere in the world in seconds using just their{" "}
-                        <span className="text-on-surface font-semibold">{X_LOGO} account</span>.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Exchange benchmark */}
                 <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-[0_10px_25px_-5px_rgba(26,24,22,0.03)] flex flex-col gap-space-sm">
                   <div className="flex items-center justify-between">
@@ -617,7 +566,7 @@ export function HomeDashboard() {
                       Exchange Benchmark
                     </span>
                     <span className="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span> Live
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary"></span> Live
                     </span>
                   </div>
                   <div className="p-space-sm bg-surface-container-low rounded-lg flex flex-col gap-2">
@@ -858,10 +807,10 @@ export function HomeDashboard() {
         </div>
         <div className="flex flex-col gap-1">
           <button className="text-left px-space-sm py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm transition-colors">
-            💡 How does claiming work?
+            How does claiming work?
           </button>
           <button className="text-left px-space-sm py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-body-sm transition-colors">
-            🔒 How is my money escrowed?
+            How is my money escrowed?
           </button>
         </div>
       </div>
