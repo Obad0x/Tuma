@@ -1,7 +1,16 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getSystemStatus, type SystemCheck } from "@/lib/status";
+import { pageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = pageMetadata({
+  title: "System status",
+  description:
+    "Live status of Tuma services — escrow contract, X login, indexer, database and FX rates.",
+  path: "/status",
+});
 
 const DOT: Record<SystemCheck["status"], string> = {
   operational: "bg-emerald-500",

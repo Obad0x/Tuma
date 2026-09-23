@@ -5,7 +5,9 @@
  * Copy is written around the real product: send USDC to an X handle on Arc,
  * held in escrow, claimed with one login. Tailwind scans this file.
  */
-const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(26,24,22,0.03)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><input id="tuma-nav" type="checkbox" class="peer hidden" /><a class="flex items-center gap-space-sm focus:outline-none" data-path="home" href="/"><img alt="Tuma logo" class="h-8 w-auto object-contain" src="/images/tuma-logo.jpg"><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">Tuma</span></a><nav class="hidden peer-checked:flex flex-col absolute top-20 left-0 w-full gap-3 border-b border-surface-container bg-surface px-6 py-4 shadow-lg lg:static lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-space-lg lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">How it works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Product</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Security</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></nav></div><div class="flex items-center gap-space-md"><label for="tuma-nav" aria-label="Menu" class="lg:hidden inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined">menu</span></label><a class="hidden sm:inline-flex items-center justify-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-full transition-colors" href="/dashboard">Open app</a><a class="inline-flex items-center justify-center font-label-lg text-label-lg text-on-primary bg-primary-container hover:bg-primary shadow-[0_4px_0_#b52603] active:translate-y-[2px] active:shadow-[0_2px_0_#b52603] px-space-lg py-space-sm rounded-full transition-all" href="/send">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1"><div class="flex flex-col w-full">
+import { LANDING_FAQS } from "@/lib/content";
+
+const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(26,24,22,0.03)]"><div class="h-20 max-w-7xl mx-auto px-gutter-desktop flex items-center justify-between"><div class="flex items-center gap-space-xl"><input id="tuma-nav" type="checkbox" class="peer hidden" /><a class="flex items-center gap-space-sm focus:outline-none" data-path="home" href="/"><img alt="Tuma logo" width="512" height="512" class="h-8 w-auto object-contain" src="/images/tuma-logo.jpg"><span class="font-headline-md text-headline-md text-on-surface tracking-tight hidden sm:inline">Tuma</span></a><nav class="hidden peer-checked:flex flex-col absolute top-20 left-0 w-full gap-3 border-b border-surface-container bg-surface px-6 py-4 shadow-lg lg:static lg:flex lg:w-auto lg:flex-row lg:items-center lg:gap-space-lg lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none"><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">How it works</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Product</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Security</a><a class="font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></nav></div><div class="flex items-center gap-space-md"><label for="tuma-nav" aria-label="Menu" class="lg:hidden inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container"><span class="material-symbols-outlined">menu</span></label><a class="hidden sm:inline-flex items-center justify-center font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface px-space-md py-space-sm rounded-full transition-colors" href="/dashboard">Open app</a><a class="inline-flex items-center justify-center font-label-lg text-label-lg text-on-primary bg-primary-container hover:bg-primary shadow-[0_4px_0_#b52603] active:translate-y-[2px] active:shadow-[0_2px_0_#b52603] px-space-lg py-space-sm rounded-full transition-all" href="/send">Get started</a><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-20 bg-background flex-1"><div class="flex flex-col w-full">
 <!-- Top Ambient Glow Field -->
 <div class="relative w-full overflow-hidden">
 <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[780px] h-[520px] bg-gradient-to-b from-primary-fixed/40 via-secondary-fixed/20 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
@@ -67,7 +69,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="w-full max-w-md aspect-square bg-gradient-to-tr from-secondary-container/30 via-primary-container/20 to-tertiary-container/30 rounded-3xl p-6 relative flex items-center justify-center shadow-xl">
 <!-- Center Tumi Mascot Visual -->
 <div class="relative z-10 flex flex-col items-center">
-<img alt="Tumi the friendly mascot delivering a USDC payment to an X handle" class="w-72 h-72 sm:w-84 sm:h-84 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-300" src="/images/tumi-hero.jpg">
+<img alt="Tumi the friendly mascot delivering a USDC payment to an X handle" width="512" height="512" fetchpriority="high" class="w-72 h-72 sm:w-84 sm:h-84 object-contain filter drop-shadow-2xl hover:scale-105 transition-transform duration-300" src="/images/tumi-hero.jpg">
 </div>
 <!-- Floating Pill 1: Claim Notification -->
 <div class="absolute -top-4 -left-4 sm:-left-8 z-20 bg-surface-container-lowest p-3.5 pr-5 rounded-2xl shadow-[0_12px_28px_-6px_rgba(26,24,22,0.12)] flex items-center gap-3" style="animation-duration: 4s;">
@@ -232,7 +234,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <!-- Connected Mascot Horizontal Strip -->
 <div class="mt-14 w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
 <div class="flex items-center gap-5">
-<img alt="Tumi the mascot in three poses: checking live rates, holding a USDC coin, and flying with a claim link" class="h-20 w-auto object-contain" src="/images/tumi-poses.jpg">
+<img alt="Tumi the mascot in three poses: checking live rates, holding a USDC coin, and flying with a claim link" width="512" height="286" loading="lazy" class="h-20 w-auto object-contain" src="/images/tumi-poses.jpg">
 <div>
 <h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Meet Tumi, your transfer companion</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-lg">
@@ -452,7 +454,7 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 <div class="lg:col-span-5 flex flex-col items-center text-center">
 <div class="relative">
 <div class="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-secondary-fixed-dim/30 absolute inset-0 filter blur-3xl -z-10"></div>
-<img alt="Tumi the friendly mascot bird smiling warmly and waving hello" class="w-72 sm:w-88 h-auto object-contain mx-auto drop-shadow-xl hover:rotate-3 transition-transform duration-300" src="/images/tumi-waving.jpg">
+<img alt="Tumi the friendly mascot bird smiling warmly and waving hello" width="512" height="512" loading="lazy" class="w-72 sm:w-88 h-auto object-contain mx-auto drop-shadow-xl hover:rotate-3 transition-transform duration-300" src="/images/tumi-waving.jpg">
 </div>
 <div class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container shadow-sm">
 <span class="material-symbols-outlined text-primary text-[18px]">favorite</span>
@@ -605,11 +607,47 @@ const LANDING_HTML = `<header class="fixed top-0 left-0 w-full z-50 bg-surface/8
 </section>
 </div></main><footer class="w-full bg-surface-container-low mt-auto"><div class="max-w-7xl mx-auto px-gutter-desktop pt-space-xl pb-space-xl"><div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-space-xl mb-space-xl"><div class="col-span-2"><div class="flex items-center gap-space-sm mb-space-md"><span class="font-headline-md text-headline-md text-on-surface tracking-tight">Tuma</span><span class="h-2 w-2 rounded-full bg-primary-container inline-block"></span></div><p class="font-body-md text-body-md text-on-surface-variant max-w-sm mb-space-lg">Send USDC to any 𝕏 handle. Escrowed on-chain, claimed with one login, refundable after 30 days. Built on Arc.</p><div class="flex items-center gap-space-sm text-on-surface-variant"><a aria-label="Global Network" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">public</span></a><a aria-label="Support Hub" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">chat_bubble</span></a><a aria-label="Community Forum" class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">group</span></a></div></div><div><h3 class="font-label-lg text-label-lg text-on-surface mb-space-md uppercase tracking-wider">Product</h3><ul class="flex flex-col gap-space-sm"><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/send">Send USDC</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/dashboard">Dashboard</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/payments">Activity</a></li></ul></div><div><h3 class="font-label-lg text-label-lg text-on-surface mb-space-md uppercase tracking-wider">How it works</h3><ul class="flex flex-col gap-space-sm"><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">Send to a handle</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#how-it-works">Claim with 𝕏 login</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Escrow &amp; refunds</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#product">Live rates</a></li></ul></div><div><h3 class="font-label-lg text-label-lg text-on-surface mb-space-md uppercase tracking-wider">Resources</h3><ul class="flex flex-col gap-space-sm"><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="https://docs.arc.io" target="_blank" rel="noopener noreferrer">Arc docs</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="https://explorer.arc.io" target="_blank" rel="noopener noreferrer">Arc explorer</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer">Circle faucet</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#security">Trust model</a></li></ul></div><div><h3 class="font-label-lg text-label-lg text-on-surface mb-space-md uppercase tracking-wider">Legal</h3><ul class="flex flex-col gap-space-sm"><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/legal/privacy">Privacy Policy</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/legal/terms">Terms of Service</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/legal/aml">AML Compliance</a></li><li role="none" class=""><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="/legal/consumer-disclosure">Consumer Disclosures</a></li></ul></div></div><div class="bg-surface-container rounded-lg p-space-md mb-space-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[24px]">verified_user</span><p class="font-body-sm text-body-sm text-on-surface-variant"><strong class="text-on-surface font-label-sm text-label-sm">Escrow-backed:</strong> every payment is held by the TumaEscrow contract on Arc Mainnet until the addressed 𝕏 account claims it. Open payments are refundable by the sender after 30 days.</p></div><div class="flex items-center gap-space-sm shrink-0"><span class="inline-flex items-center px-space-sm py-space-xs rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">Arc Mainnet</span><span class="inline-flex items-center px-space-sm py-space-xs rounded-full bg-surface-container-highest text-on-surface-variant font-label-sm text-label-sm">USDC-native</span></div></div><div class="flex flex-col sm:flex-row items-center justify-between gap-space-md text-on-surface-variant"><p class="font-body-sm text-body-sm">© 2025 Tuma. All rights reserved.</p></div></div></footer>`;
 
+const FAQ_SECTION = `
+<!-- 8. FREQUENTLY ASKED QUESTIONS -->
+<section class="w-full max-w-3xl mx-auto px-gutter-desktop py-24" id="faq">
+<div class="text-center max-w-2xl mx-auto mb-12">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed font-label-md text-label-md font-bold mb-4"><span>QUESTIONS</span></div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Frequently asked questions</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Everything about sending USDC to an X handle, claiming it, escrow and refunds.</p>
+</div>
+<div class="flex flex-col gap-4">${LANDING_FAQS.map(
+  (faq) => `
+<details class="group bg-surface-container-lowest rounded-2xl p-6 shadow-sm">
+<summary class="flex items-center justify-between gap-4 cursor-pointer list-none">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">${faq.question}</h3>
+<span class="material-symbols-outlined text-on-surface-variant group-open:rotate-45 transition-transform">add</span>
+</summary>
+<p class="font-body-md text-body-md text-on-surface-variant mt-4 leading-relaxed">${faq.answer}</p>
+</details>`,
+).join("")}</div>
+</section>
+`;
+
+const FOOTER_LINK_CLASS =
+  "font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors";
+const NAV_LINK_CLASS =
+  "font-label-lg text-label-lg text-on-surface-variant hover:text-on-surface transition-colors";
+
+const LANDING_HTML_ENHANCED = LANDING_HTML.replace("</main>", `${FAQ_SECTION}</main>`)
+  .replace(
+    'href="/payments">Activity</a></li></ul></div>',
+    `href="/payments">Activity</a></li><li role="none" class=""><a class="${FOOTER_LINK_CLASS}" href="/learn">Learn</a></li><li role="none" class=""><a class="${FOOTER_LINK_CLASS}" href="/faq">FAQ</a></li></ul></div>`,
+  )
+  .replace(
+    'href="/payments">Activity</a></nav>',
+    `href="/payments">Activity</a><a class="${NAV_LINK_CLASS}" href="/learn">Learn</a><a class="${NAV_LINK_CLASS}" href="/faq">FAQ</a></nav>`,
+  );
+
 export function LandingPage() {
   return (
     <div
       className="min-h-screen flex flex-col overflow-x-hidden bg-background font-body-md text-on-surface antialiased selection:bg-primary-fixed selection:text-on-primary-fixed"
-      dangerouslySetInnerHTML={{ __html: LANDING_HTML }}
+      dangerouslySetInnerHTML={{ __html: LANDING_HTML_ENHANCED }}
     />
   );
 }

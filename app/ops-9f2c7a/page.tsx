@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import type { Metadata } from "next";
 import { AdminDashboard } from "@/components/admin-dashboard";
 import { AdminLogin } from "@/components/admin-login";
 import { AdminLogout } from "@/components/admin-logout";
@@ -9,6 +10,15 @@ import { friendlyError } from "@/lib/errors";
 import { secretMatches } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Console",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
+};
 
 // Deliberately non-guessable route. Rename the folder to rotate the entry point.
 export default async function ConsolePage() {

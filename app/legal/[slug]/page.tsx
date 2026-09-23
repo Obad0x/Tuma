@@ -1,9 +1,32 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LEGAL_DOCS, getLegalDoc } from "@/lib/legal";
+import { SITE_NAME, absoluteUrl } from "@/lib/site";
+import { StructuredData } from "@/components/structured-data";
 
 export function generateStaticParams() {
   return LEGAL_DOCS.map((doc) => ({ slug: doc.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/legal/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const doc = getLegalDoc(slug);
+  if (!doc) return {};
+  return {
+    title: doc.title,
+    description: doc.intro,
+    alternates: { canonical: `/legal/${doc.slug}` },
+    openGraph: {
+      type: "article",
+      title: doc.title,
+      description: doc.intro,
+      url: absoluteUrl(`/legal/${doc.slug}`),
+      siteName: SITE_NAME,
+    },
+  };
 }
 
 export default async function LegalPage({ params }: PageProps<"/legal/[slug]">) {
@@ -11,8 +34,23 @@ export default async function LegalPage({ params }: PageProps<"/legal/[slug]">) 
   const doc = getLegalDoc(slug);
   if (!doc) notFound();
 
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: doc.title,
+        item: absoluteUrl(`/legal/${doc.slug}`),
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-background px-4 py-16 text-on-surface">
+      <StructuredData data={breadcrumb} />
       <article className="mx-auto w-full max-w-2xl">
         <div className="mb-8 flex items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
