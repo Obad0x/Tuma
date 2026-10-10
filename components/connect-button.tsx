@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useAppKit } from "@reown/appkit/react";
 import { useAccount, useConnect, useDisconnect, useSwitchChain, type Connector } from "wagmi";
 import { arc } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
 import { shortAddress } from "@/lib/format";
+import { appKitEnabled } from "@/lib/wagmi";
 
-export function ConnectButton() {
+const baseClass =
+  "rounded-xl px-3 py-2 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed";
+
+/// Fallback connection button used when AppKit is disabled (no project id). Offers the
+/// injected browser wallet directly.
+function InjectedConnectButton() {
   const { address, isConnected, chainId } = useAccount();
   const { connectors, connectAsync, isPending: connecting } = useConnect();
   const { disconnect } = useDisconnect();
@@ -22,9 +29,6 @@ export function ConnectButton() {
     seen.add(key);
     unique.push(connector);
   }
-
-  const base =
-    "rounded-xl px-3 py-2 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed";
 
   async function handleConnect(connector: Connector) {
     setError(null);
@@ -42,7 +46,7 @@ export function ConnectButton() {
         <button
           onClick={() => setOpen((value) => !value)}
           disabled={connecting}
-          className={`${base} bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200`}
+          className={`${baseClass} bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200`}
         >
           {connecting ? "Connecting…" : "Connect wallet"}
         </button>
@@ -83,7 +87,7 @@ export function ConnectButton() {
       <button
         onClick={() => switchChain({ chainId: arc.id })}
         disabled={switching}
-        className={`${base} bg-amber-500 text-white hover:bg-amber-600`}
+        className={`${baseClass} bg-amber-500 text-white hover:bg-amber-600`}
       >
         {switching ? "Switching…" : "Switch to Arc"}
       </button>
@@ -94,9 +98,55 @@ export function ConnectButton() {
     <button
       onClick={() => disconnect()}
       title="Disconnect"
-      className={`${base} border border-zinc-300 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800`}
+      className={`${baseClass} border border-zinc-300 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800`}
     >
       {shortAddress(address)}
     </button>
   );
+}
+
+/// AppKit connection button: opens the Reown modal for wallet discovery / WalletConnect.
+function AppKitConnectButton() {
+  const { open } = useAppKit();
+  const { address, isConnected, isConnecting, chainId } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { switchChain, isPending: switching } = useSwitchChain();
+
+  if (!isConnected) {
+    return (
+      <button
+        onClick={() => open({ view: "Connect" })}
+        disabled={isConnecting}
+        className={`${baseClass} bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200`}
+      >
+        {isConnecting ? "Connecting…" : "Connect wallet"}
+      </button>
+    );
+  }
+
+  if (chainId !== arc.id) {
+    return (
+      <button
+        onClick={() => switchChain({ chainId: arc.id })}
+        disabled={switching}
+        className={`${baseClass} bg-amber-500 text-white hover:bg-amber-600`}
+      >
+        {switching ? "Switching…" : "Switch to Arc"}
+      </button>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => disconnect()}
+      title="Disconnect"
+      className={`${baseClass} border border-zinc-300 text-zinc-800 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-800`}
+    >
+      {shortAddress(address)}
+    </button>
+  );
+}
+
+export function ConnectButton() {
+  return appKitEnabled ? <AppKitConnectButton /> : <InjectedConnectButton />;
 }

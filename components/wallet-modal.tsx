@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppKit } from "@reown/appkit/react";
 import { useConnect, type Connector } from "wagmi";
 import { friendlyError } from "@/lib/errors";
+import { appKitEnabled } from "@/lib/wagmi";
 
 function WalletConnectLogo() {
   return (
@@ -15,7 +17,11 @@ function WalletConnectLogo() {
   );
 }
 
-export function WalletModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+type WalletModalProps = { open: boolean; onClose: () => void };
+
+/// Fallback modal used when AppKit is disabled (no project id). Picker for
+/// WalletConnect / Browser Wallet.
+function InjectedWalletModal({ open, onClose }: WalletModalProps) {
   const { connectors, connectAsync, isPending } = useConnect();
   const [error, setError] = useState<string | null>(null);
 
@@ -85,4 +91,23 @@ export function WalletModal({ open, onClose }: { open: boolean; onClose: () => v
       </div>
     </div>
   );
+}
+
+/// AppKit modal: renders nothing itself and instead opens the Reown modal, then resets
+/// the parent's `open` state so the modal is only triggered once.
+function AppKitWalletModal({ open, onClose }: WalletModalProps) {
+  const { open: openAppKit } = useAppKit();
+
+  useEffect(() => {
+    if (open) {
+      openAppKit({ view: "Connect" });
+      onClose();
+    }
+  }, [open, onClose, openAppKit]);
+
+  return null;
+}
+
+export function WalletModal(props: WalletModalProps) {
+  return appKitEnabled ? <AppKitWalletModal {...props} /> : <InjectedWalletModal {...props} />;
 }

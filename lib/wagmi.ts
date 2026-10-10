@@ -1,5 +1,7 @@
-import { createConfig, http, type CreateConnectorFn } from "wagmi";
-import { injected, walletConnect } from "wagmi/connectors";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
+import { createAppKit } from "@reown/appkit/react";
+import { createConfig, http } from "wagmi";
+import { injected } from "wagmi/connectors";
 import { arc } from "./arc";
 import { SITE_URL } from "./site";
 
@@ -7,36 +9,58 @@ import { SITE_URL } from "./site";
 /// site as a possible scam. Uses the live origin in the browser, SITE_URL on the server.
 const siteUrl = typeof window !== "undefined" ? window.location.origin : SITE_URL;
 
-const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID;
+/// Empty when the Reown project id is not configured; the app then falls back to the
+/// plain injected-wallet flow instead of AppKit.
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
 
-/// Two options only: WalletConnect (QR / mobile) and the injected browser wallet.
-const connectors: CreateConnectorFn[] = [];
+const transports = { [arc.id]: http(process.env.NEXT_PUBLIC_ARC_RPC) };
 
-if (walletConnectProjectId) {
-  connectors.push(
-    walletConnect({
-      projectId: walletConnectProjectId,
-      showQrModal: true,
-      metadata: {
-        name: "Tuma",
-        description: "Send USDC to an X handle. They claim it with one login.",
-        url: siteUrl,
-        icons: [`${siteUrl}/icon.jpg`],
-      },
-    }),
-  );
+/// Whether the Reown AppKit connection layer is active. Kept at module scope so the
+/// AppKit / injected components never call the AppKit hooks conditionally.
+export const appKitEnabled = projectId.length > 0;
+
+const wagmiAdapter = appKitEnabled
+  ? new WagmiAdapter({
+      projectId,
+      networks: [arc],
+      transports,
+      ssr: true,
+    })
+  : undefined;
+
+/// Must run once at module level (never inside a component or effect), otherwise
+/// `useAppKit()` throws.
+if (wagmiAdapter) {
+  createAppKit({
+    adapters: [wagmiAdapter],
+    projectId,
+    networks: [arc],
+    defaultNetwork: arc,
+    metadata: {
+      name: "Tuma",
+      description: "Send USDC to an X handle. They claim it with one login.",
+      url: siteUrl,
+      icons: [`${siteUrl}/icon.jpg`],
+    },
+    features: {
+      analytics: false,
+      email: false,
+      socials: false,
+      swaps: false,
+      onramp: false,
+      history: false,
+    },
+  });
 }
 
-connectors.push(injected());
-
-export const wagmiConfig = createConfig({
-  chains: [arc],
-  connectors,
-  transports: {
-    [arc.id]: http(process.env.NEXT_PUBLIC_ARC_RPC),
-  },
-  ssr: true,
-});
+export const wagmiConfig = wagmiAdapter
+  ? wagmiAdapter.wagmiConfig
+  : createConfig({
+      chains: [arc],
+      connectors: [injected()],
+      transports,
+      ssr: true,
+    });
 
 declare module "wagmi" {
   interface Register {

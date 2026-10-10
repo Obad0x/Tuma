@@ -10,6 +10,7 @@ const walletConnectHosts = [
   "https://*.reown.com",
   "https://*.web3modal.com",
   "https://*.web3modal.org",
+  "https://*.coinbase.com",
   "wss://*.walletconnect.com",
   "wss://*.walletconnect.org",
 ];
@@ -40,6 +41,18 @@ const csp = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // `@coinbase/cdp-sdk` (pulled in via AppKit -> @wagmi/connectors -> @base-org/account)
+  // lazy-loads optional `@x402/*` peer dependencies for x402 payment signing. Turbopack
+  // fails the build resolving those optional deps, so ignore only those specific errors;
+  // they are wrapped in a try/catch at runtime and never executed by this app.
+  turbopack: {
+    ignoreIssue: [
+      {
+        path: /@coinbase\/cdp-sdk/,
+        title: /Module not found: Can't resolve '@x402\//,
+      },
+    ],
+  },
   async headers() {
     return [
       {
