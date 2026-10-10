@@ -23,13 +23,28 @@ export function isSameOrigin(request: Request): boolean {
   return true;
 }
 
-/// Compares a provided secret in constant time (avoids timing side channels).
+import { createHash, timingSafeEqual } from "node:crypto";
+
+/// Compares a provided secret in constant time (hashes first so length is not leaked).
 export function secretMatches(provided: string | null, expected: string | undefined): boolean {
   if (!expected || !provided) return false;
-  if (provided.length !== expected.length) return false;
-  let diff = 0;
-  for (let i = 0; i < provided.length; i++) {
-    diff |= provided.charCodeAt(i) ^ expected.charCodeAt(i);
-  }
-  return diff === 0;
+  const a = createHash("sha256").update(provided).digest();
+  const b = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(a, b);
+}
+
+/// Best-effort client IP (Vercel/most proxies set x-forwarded-for).
+export function clientIp(request: Request): string {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+}
+
+const memoryHits = new Map<string, number[]>();
+
+/// Small in-memory limiter used as a fallback when no database is configured.
+export function memoryRateLimited(key: string, limit: number, windowMs: number): boolean {
+  const now = Date.now();
+  const recent = (memoryHits.get(key) ?? []).filter((t) => now - t < windowMs);
+  recent.push(now);
+  memoryHits.set(key, recent);
+  return recent.length > limit;
 }

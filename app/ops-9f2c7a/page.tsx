@@ -4,10 +4,9 @@ import { AdminDashboard } from "@/components/admin-dashboard";
 import { AdminLogin } from "@/components/admin-login";
 import { AdminLogout } from "@/components/admin-logout";
 import { getAdminData, type AdminData } from "@/lib/admin";
-import { ADMIN_COOKIE } from "@/lib/admin-auth";
+import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/admin-auth";
 import { isEscrowConfigured } from "@/lib/arc";
 import { friendlyError } from "@/lib/errors";
-import { secretMatches } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
@@ -22,10 +21,7 @@ export const metadata: Metadata = {
 
 // Deliberately non-guessable route. Rename the folder to rotate the entry point.
 export default async function ConsolePage() {
-  const authed = secretMatches(
-    (await cookies()).get(ADMIN_COOKIE)?.value ?? null,
-    process.env.ADMIN_SECRET,
-  );
+  const authed = verifyAdminSession((await cookies()).get(ADMIN_COOKIE)?.value);
   if (!authed) return <AdminLogin />;
 
   let data: AdminData | null = null;
