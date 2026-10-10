@@ -31,3 +31,8 @@ yarn-error.log*
 
 # local embedded postgres
 .pgdata/
+
+# AI tooling files (AGENTS.md/CLAUDE.md are recreated by `next dev`)
+AGENTS.md
+CLAUDE.md
+ai instructions/
