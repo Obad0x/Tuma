@@ -176,4 +176,34 @@ describe("TumaEscrow", () => {
       );
     });
   });
+
+  describe("pause and ownership", () => {
+    it("blocks deposits while paused but still allows release and refund", async () => {
+      const id = await deposit();
+      await escrow.connect(owner).pause();
+
+      await expect(escrow.connect(sender).deposit("bob", AMOUNT)).to.be.revertedWithCustomError(
+        escrow,
+        "EnforcedPause"
+      );
+      await expect(escrow.connect(operator).release(id, recipient.address)).to.not.be.reverted;
+
+      await escrow.connect(owner).unpause();
+      await expect(escrow.connect(sender).deposit("bob", AMOUNT)).to.not.be.reverted;
+    });
+
+    it("only the owner can pause", async () => {
+      await expect(escrow.connect(other).pause()).to.be.revertedWithCustomError(
+        escrow,
+        "OwnableUnauthorizedAccount"
+      );
+    });
+
+    it("uses two-step ownership transfer", async () => {
+      await escrow.connect(owner).transferOwnership(other.address);
+      expect(await escrow.owner()).to.equal(owner.address);
+      await escrow.connect(other).acceptOwnership();
+      expect(await escrow.owner()).to.equal(other.address);
+    });
+  });
 });

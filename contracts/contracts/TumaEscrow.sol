@@ -4,12 +4,14 @@ pragma solidity ^0.8.24;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /// @title TumaEscrow
 /// @notice Holds USDC payments that are claimable by the owner of an X (Twitter) handle.
 ///         A trusted operator (the Tuma server) releases funds after it verifies the handle.
-contract TumaEscrow is Ownable, ReentrancyGuard {
+contract TumaEscrow is Ownable2Step, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     enum Status {
@@ -64,6 +66,15 @@ contract TumaEscrow is Ownable, ReentrancyGuard {
         operator = operator_;
     }
 
+    /// @notice Pause new deposits (emergency stop). Release and refund keep working so funds are never trapped.
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
     /// @notice Update the server operator wallet. Owner only.
     function setOperator(address newOperator) external onlyOwner {
         if (newOperator == address(0)) revert ZeroAddress();
@@ -74,7 +85,7 @@ contract TumaEscrow is Ownable, ReentrancyGuard {
 
     /// @notice Deposit USDC to be claimed by the owner of `handle`.
     /// @dev Caller must approve this contract for `amount` first.
-    function deposit(string calldata handle, uint256 amount) external nonReentrant returns (uint256 id) {
+    function deposit(string calldata handle, uint256 amount) external nonReentrant whenNotPaused returns (uint256 id) {
         if (!isValidHandle(handle)) revert InvalidHandle();
         if (amount == 0) revert InvalidAmount();
 
