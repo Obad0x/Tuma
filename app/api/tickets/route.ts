@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { dbEnabled } from "@/lib/db";
 import { isSameOrigin } from "@/lib/http";
-import { upsertUser } from "@/lib/ledger";
+import { isRateLimited, upsertUser } from "@/lib/ledger";
 import { createTicket, listTicketsForUser } from "@/lib/tickets";
 
 export const runtime = "nodejs";
@@ -35,6 +35,10 @@ export async function POST(request: Request) {
   }
   const userId = await currentUserId();
   if (!userId) return NextResponse.json({ error: "Sign in with X first." }, { status: 401 });
+
+  if (await isRateLimited(`ticket:${userId}`, 5, 600)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
 
   const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const subject = String(body.subject ?? "").trim().slice(0, 120);

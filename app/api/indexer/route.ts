@@ -39,10 +39,8 @@ async function run(request: Request) {
     const result = await indexEscrow(client);
     return NextResponse.json(result);
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Indexer failed." },
-      { status: 500 },
-    );
+    console.error("indexer failed", error);
+    return NextResponse.json({ error: "Indexer failed." }, { status: 500 });
   }
 }
 

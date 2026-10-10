@@ -14,6 +14,14 @@ const TYPES: Record<string, string> = {
 };
 const MAX_BYTES = 5 * 1024 * 1024;
 
+/// Checks the real file signature (the browser-provided MIME type can be faked).
+function matchesSignature(buf: Buffer, extension: string): boolean {
+  if (extension === "png") return buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  if (extension === "jpg") return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+  if (extension === "webp") return buf.subarray(0, 4).toString("ascii") === "RIFF" && buf.subarray(8, 12).toString("ascii") === "WEBP";
+  return false;
+}
+
 /// Upload a profile picture; stored on the server disk (swap lib/storage for Drive later).
 export async function POST(request: Request) {
   if (!isSameOrigin(request)) {
@@ -43,7 +51,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Use a PNG, JPEG or WebP image." }, { status: 415 });
   }
 
-  const url = await saveProfileImage(user.xUserId, Buffer.from(await file.arrayBuffer()), extension);
+  const data = Buffer.from(await file.arrayBuffer());
+  if (!matchesSignature(data, extension)) {
+    return NextResponse.json({ error: "That file is not a valid image." }, { status: 415 });
+  }
+
+  const url = await saveProfileImage(user.xUserId, data, extension);
 
   if (dbEnabled) {
     const userId = await upsertUser({

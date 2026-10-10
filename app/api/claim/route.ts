@@ -10,9 +10,9 @@ import {
 import { privateKeyToAccount } from "viem/accounts";
 import { auth } from "@/auth";
 import { TumaEscrowABI } from "@/lib/abi";
-import { ESCROW_ADDRESS, arc, isEscrowConfigured } from "@/lib/arc";
+import { ESCROW_ADDRESS, USDC_ADDRESS, arc, isEscrowConfigured } from "@/lib/arc";
 import { getPayment } from "@/lib/chain";
-import { isSameOrigin } from "@/lib/http";
+import { clientIp, isSameOrigin, memoryRateLimited } from "@/lib/http";
 import {
   isRateLimited as dbRateLimited,
   recordClaim,
@@ -30,19 +30,6 @@ const publicClient = createPublicClient({
 
 /// Prevents a double-click from sending two release transactions for the same id.
 const inFlight = new Set<string>();
-
-/// Very small in-memory rate limit. Fine for a single demo server.
-const RATE_WINDOW_MS = 60_000;
-const RATE_MAX = 10;
-const hits = new Map<string, number[]>();
-
-function rateLimited(key: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(key) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
-  recent.push(now);
-  hits.set(key, recent);
-  return recent.length > RATE_MAX;
-}
 
 function fail(error: string, status = 400) {
   return NextResponse.json({ error }, { status });
@@ -64,7 +51,8 @@ function releaseErrorMessage(error: unknown): string {
       }
     }
     if (/user rejected|denied/i.test(error.message)) return "The transaction was rejected.";
-    return error.shortMessage ?? error.message;
+    console.error("release failed", error);
+    return "The release could not be completed. Please try again.";
   }
   return "Something went wrong while releasing the funds.";
 }
@@ -80,7 +68,9 @@ export async function POST(request: Request) {
   if (!OPERATOR_PRIVATE_KEY) return fail("The server operator wallet is not configured.", 503);
 
   // Prefer the persistent limiter; fall back to in-memory when there is no DB.
-  const limited = (await dbRateLimited(`claim:${username}`, 10, 60)) || rateLimited(username);
+  const limited = (await dbRateLimited(`claim:${username}`, 10, 60)) ||
+    memoryRateLimited(`claim:${username}`, 10, 60_000) ||
+    memoryRateLimited(`claim-ip:${clientIp(request)}`, 30, 60_000);
   if (limited) {
     return fail("Too many attempts. Wait a minute and try again.", 429);
   }
@@ -96,6 +86,14 @@ export async function POST(request: Request) {
   const recipient = typeof body.recipient === "string" ? body.recipient.trim() : "";
   if (!/^\d+$/.test(id)) return fail("Invalid payment id.");
   if (!isAddress(recipient)) return fail("Enter a valid wallet address.");
+  const blocked = [
+    "0x0000000000000000000000000000000000000000",
+    ESCROW_ADDRESS.toLowerCase(),
+    USDC_ADDRESS.toLowerCase(),
+  ];
+  if (blocked.includes(recipient.toLowerCase())) {
+    return fail("That address can't receive funds. Use your own wallet address.");
+  }
 
   let payment;
   try {
@@ -106,6 +104,7 @@ export async function POST(request: Request) {
 
   if (!payment) return fail("This payment does not exist.", 404);
   if (payment.status !== 0) return fail("This payment has already been claimed or refunded.", 409);
+  if (payment.expired) return fail("This payment has expired. The sender can refund it.", 410);
   if (payment.handle.toLowerCase() !== username) {
     return fail(
       `You're signed in as @${username} but this payment is for @${payment.handle}.`,

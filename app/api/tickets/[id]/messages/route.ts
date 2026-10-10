@@ -3,7 +3,7 @@ import { TicketAuthor } from "@prisma/client";
 import { auth } from "@/auth";
 import { dbEnabled } from "@/lib/db";
 import { isSameOrigin } from "@/lib/http";
-import { upsertUser } from "@/lib/ledger";
+import { isRateLimited, upsertUser } from "@/lib/ledger";
 import { addTicketMessage, getTicket } from "@/lib/tickets";
 
 export const runtime = "nodejs";
@@ -27,6 +27,10 @@ export async function POST(request: Request, ctx: RouteContext<"/api/tickets/[id
     name: user.name ?? null,
     image: user.image ?? null,
   });
+
+  if (await isRateLimited(`ticket-msg:${userId}`, 20, 600)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
 
   const { id } = await ctx.params;
   const ticket = await getTicket(id);
