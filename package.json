@@ -1,12 +1,14 @@
 {
-  "name": "tuma-scaffold",
+  "name": "tuma",
   "version": "0.1.0",
   "private": true,
+  "engines": { "node": ">=20.9" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "postinstall": "prisma generate",
     "db:dev": "node scripts/dev-db.mjs",
     "db:push": "prisma db push",

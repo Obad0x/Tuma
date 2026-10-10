@@ -75,10 +75,11 @@ Wallets: injected wallets via EIP-6963, an explicit **Zerion** target, and Walle
 
 ## Admin
 
-`/admin` shows protocol stats, contract addresses, and every payment with search, status
-filters and CSV export. Write actions are wallet-gated on-chain: **set operator** requires
-the contract owner, **force release** requires the operator. Read-only data is public chain
-data, so the page is safe to leave in the build.
+The console at `/ops-9f2c7a` (gated by `ADMIN_SECRET`) shows protocol stats, contract
+addresses, and every payment with search, status filters and CSV export. Write actions are
+wallet-gated on-chain: **set operator** requires the contract owner, **force release**
+requires the operator. Read-only data is public chain data, so the page is safe to leave in
+the build.
 
 ## Quickstart
 
