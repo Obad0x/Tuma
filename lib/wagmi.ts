@@ -40,7 +40,7 @@ if (wagmiAdapter) {
       name: "Tuma",
       description: "Send USDC to an X handle. They claim it with one login.",
       url: siteUrl,
-      icons: [`${siteUrl}/icon.jpg`],
+      icons: [`${siteUrl}/icon-192.png`],
     },
     features: {
       analytics: false,
