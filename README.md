@@ -122,7 +122,7 @@ http://localhost:3000/api/auth/callback/twitter
 
 ### Deploying on Vercel
 
-Add the secrets in Project Settings, Environment Variables, and mark them Sensitive. The public `NEXT_PUBLIC_` values can live in a committed `.env.production`. Redeploy after any change, since public values are baked in at build time.
+Add the secrets in Project Settings, Environment Variables, and mark them Sensitive. The public `NEXT_PUBLIC_` values can live in a committed `.env.production`, but any variable also set in the Vercel dashboard wins over the file. Leave the escrow values blank (or set them in the dashboard): placeholder text like `<deploy block>` is parsed at build time and fails the production build. Redeploy after any change, since public values are baked in at build time.
 
 ## Database (optional)
 

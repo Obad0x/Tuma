@@ -10,14 +10,17 @@ import { SITE_URL } from "./site";
 const siteUrl = typeof window !== "undefined" ? window.location.origin : SITE_URL;
 
 /// Empty when the Reown project id is not configured; the app then falls back to the
-/// plain injected-wallet flow instead of AppKit.
-const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "";
+/// plain injected-wallet flow instead of AppKit. Trim whitespace and validate the
+/// 32-char hex format so a stray space or `<optional>` placeholder disables AppKit
+/// instead of initialising it with an invalid id.
+const projectId = (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "").trim();
+const isValidProjectId = /^[0-9a-f]{32}$/i.test(projectId);
 
 const transports = { [arc.id]: http(process.env.NEXT_PUBLIC_ARC_RPC) };
 
 /// Whether the Reown AppKit connection layer is active. Kept at module scope so the
 /// AppKit / injected components never call the AppKit hooks conditionally.
-export const appKitEnabled = projectId.length > 0;
+export const appKitEnabled = isValidProjectId;
 
 const wagmiAdapter = appKitEnabled
   ? new WagmiAdapter({
