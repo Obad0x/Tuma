@@ -6,6 +6,11 @@ export { arc };
 
 export const ARC_EXPLORER = arc.blockExplorers.default.url;
 
+/// Public RPC endpoint. Falls back to the viem chain default when the env var is
+/// missing or blank (e.g. a blank dashboard variable), so the app never talks to
+/// an empty URL.
+export const ARC_RPC_URL = process.env.NEXT_PUBLIC_ARC_RPC?.trim() || arc.rpcUrls.default.http[0];
+
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const ADDRESS_PATTERN = /^0x[0-9a-fA-F]{40}$/;
 

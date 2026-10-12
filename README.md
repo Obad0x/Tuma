@@ -59,7 +59,7 @@ prisma/                 Database schema
 docs/                   Setup guide and demo script
 ```
 
-Wallets: injected wallets (EIP-6963), an explicit Zerion target, and WalletConnect for mobile wallets when a Reown project ID is set.
+Wallets: injected wallets (EIP-6963), an explicit Zerion target, and WalletConnect for mobile wallets via Reown AppKit. AppKit is on by default with the committed public project ID; set `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=off` to only offer injected wallets.
 
 ## Quickstart
 
@@ -95,7 +95,7 @@ Arc is a mainnet, so the deployer and operator wallets need a small amount of re
 | `NEXT_PUBLIC_USDC_ADDRESS` | USDC ERC-20 interface |
 | `NEXT_PUBLIC_ESCROW_ADDRESS` | Deployed `TumaEscrow` |
 | `NEXT_PUBLIC_ESCROW_DEPLOY_BLOCK` | Block to start log scans from |
-| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | Reown project ID (optional, enables WalletConnect) |
+| `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` | Reown project ID (a default is built in; set to `off` to disable WalletConnect) |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Search Console token (optional) |
 
 ### Server-only secrets

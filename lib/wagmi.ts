@@ -2,25 +2,27 @@ import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
 import { createConfig, http } from "wagmi";
 import { injected } from "wagmi/connectors";
-import { arc } from "./arc";
+import { ARC_RPC_URL, arc } from "./arc";
 import { SITE_URL } from "./site";
 
 /// Must match the domain the app is served from, or WalletConnect Verify flags the
 /// site as a possible scam. Uses the live origin in the browser, SITE_URL on the server.
 const siteUrl = typeof window !== "undefined" ? window.location.origin : SITE_URL;
 
-/// Empty when the Reown project id is not configured; the app then falls back to the
-/// plain injected-wallet flow instead of AppKit. Trim whitespace and validate the
-/// 32-char hex format so a stray space or `<optional>` placeholder disables AppKit
-/// instead of initialising it with an invalid id.
-const projectId = (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "").trim();
-const isValidProjectId = /^[0-9a-f]{32}$/i.test(projectId);
+/// Public Reown project id (a client identifier, safe to ship in the bundle). A
+/// committed default keeps WalletConnect working when the env var is missing or
+/// blank, e.g. when a host sets it to an empty value. An explicit but invalid
+/// value disables AppKit, so setting it to "off" only offers injected wallets.
+const DEFAULT_WALLETCONNECT_PROJECT_ID = "86f83c9d3b272f9ccf2a029ff4c1b410";
+const projectIdPattern = /^[0-9a-f]{32}$/i;
+const rawProjectId = (process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID ?? "").trim();
+const projectId = rawProjectId === "" ? DEFAULT_WALLETCONNECT_PROJECT_ID : rawProjectId;
 
-const transports = { [arc.id]: http(process.env.NEXT_PUBLIC_ARC_RPC) };
+const transports = { [arc.id]: http(ARC_RPC_URL) };
 
 /// Whether the Reown AppKit connection layer is active. Kept at module scope so the
 /// AppKit / injected components never call the AppKit hooks conditionally.
-export const appKitEnabled = isValidProjectId;
+export const appKitEnabled = projectIdPattern.test(projectId);
 
 const wagmiAdapter = appKitEnabled
   ? new WagmiAdapter({

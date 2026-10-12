@@ -14,9 +14,10 @@ const walletConnectHosts = [
   "wss://*.walletconnect.com",
   "wss://*.walletconnect.org",
 ];
+const DEFAULT_ARC_RPC = "https://rpc.mainnet.arc.io";
 const rpcHost = (() => {
   try {
-    return new URL(process.env.NEXT_PUBLIC_ARC_RPC ?? "").origin;
+    return new URL(process.env.NEXT_PUBLIC_ARC_RPC?.trim() || DEFAULT_ARC_RPC).origin;
   } catch {
     return "";
   }

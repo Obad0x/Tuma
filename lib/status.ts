@@ -1,6 +1,6 @@
 import { createPublicClient, http } from "viem";
 import { TumaEscrowABI } from "./abi";
-import { ESCROW_ADDRESS, arc, isEscrowConfigured } from "./arc";
+import { ESCROW_ADDRESS, ARC_RPC_URL, arc, isEscrowConfigured } from "./arc";
 import { getDb, databaseUrlSource } from "./db";
 
 export type CheckStatus = "operational" | "degraded" | "down";
@@ -10,7 +10,7 @@ export async function getSystemStatus(): Promise<SystemCheck[]> {
   const checks: SystemCheck[] = [];
   const client = createPublicClient({
     chain: arc,
-    transport: http(process.env.NEXT_PUBLIC_ARC_RPC),
+    transport: http(ARC_RPC_URL),
   });
 
   try {
