@@ -90,6 +90,8 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
+
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -98,6 +100,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                name: "Tuma",
+                alternateName: ["Tuma App"],
+                url: "https://tuma-psi.vercel.app/",
+                image: "https://tuma-psi.vercel.app/icon.png",
+              }),
+            }}
+        />
       </body>
     </html>
   );
