@@ -36,3 +36,5 @@ yarn-error.log*
 AGENTS.md
 CLAUDE.md
 ai instructions/
+
+   !.env.production
