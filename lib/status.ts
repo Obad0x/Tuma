@@ -56,10 +56,21 @@ export async function getSystemStatus(): Promise<SystemCheck[]> {
   } else {
     try {
       await db.$queryRaw`SELECT 1`;
+      const requiredTables = ["User", "Payment", "Ticket", "TicketMessage"];
+      const rows = await db.$queryRaw<Array<{ table_name: string }>>`
+        SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema()
+      `;
+      const present = new Set(rows.map((row) => row.table_name));
+      const missing = requiredTables.filter((name) => !present.has(name));
       checks.push({
         name: "Database",
-        status: "operational",
-        detail: databaseUrlSource ? `connected via ${databaseUrlSource}` : "connected",
+        status: missing.length === 0 ? "operational" : "degraded",
+        detail:
+          missing.length > 0
+            ? `connected, missing tables: ${missing.join(", ")}`
+            : databaseUrlSource
+              ? `connected via ${databaseUrlSource}`
+              : "connected",
       });
     } catch (error) {
       const message = error instanceof Error ? error.message.split("\n")[0] : "query failed";
