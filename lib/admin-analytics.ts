@@ -7,6 +7,16 @@ import { getDb } from "./db";
 export type DailyPoint = { date: string; payments: number; volumeUsdc: number; users: number };
 export type RankedItem = { label: string; count: number; volumeUsdc: number };
 export type NoteItem = { handle: string; note: string; createdAt: string };
+export type RecentPayment = {
+  escrowId: string;
+  handle: string;
+  sender: string;
+  amountUsdc: string;
+  status: string;
+  note: string | null;
+  createdAt: string;
+};
+export type RecentUser = { username: string; createdAt: string };
 
 export type AdminAnalytics = {
   users: { total: number; new7d: number; new30d: number; active30d: number };
@@ -23,6 +33,8 @@ export type AdminAnalytics = {
   topHandles: RankedItem[];
   topSenders: RankedItem[];
   notes: NoteItem[];
+  recentPayments: RecentPayment[];
+  recentUsers: RecentUser[];
 };
 
 const DAY = 86_400_000;
@@ -59,9 +71,10 @@ export async function getAdminAnalytics(): Promise<AdminAnalytics | null> {
   if (!db) return null;
 
   const [users, payments, tickets] = await Promise.all([
-    db.user.findMany({ select: { id: true, createdAt: true } }),
+    db.user.findMany({ select: { id: true, username: true, createdAt: true } }),
     db.payment.findMany({
       select: {
+        escrowId: true,
         handle: true,
         sender: true,
         amountUsdc: true,
@@ -148,5 +161,21 @@ export async function getAdminAnalytics(): Promise<AdminAnalytics | null> {
       payments.map((payment) => ({ key: payment.sender, amount: toNumber(payment.amountUsdc) })),
     ),
     notes,
+    recentPayments: [...payments]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, 25)
+      .map((payment) => ({
+        escrowId: payment.escrowId,
+        handle: payment.handle,
+        sender: payment.sender,
+        amountUsdc: payment.amountUsdc,
+        status: payment.status,
+        note: payment.note,
+        createdAt: payment.createdAt.toISOString(),
+      })),
+    recentUsers: [...users]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, 10)
+      .map((user) => ({ username: user.username, createdAt: user.createdAt.toISOString() })),
   };
 }
