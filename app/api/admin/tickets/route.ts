@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { TicketStatus } from "@prisma/client";
+import { TicketAuthor, TicketStatus } from "@prisma/client";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { dbEnabled } from "@/lib/db";
 import { isSameOrigin } from "@/lib/http";
-import { listAllTickets, setTicketStatus } from "@/lib/tickets";
+import { addTicketMessage, getTicket, listAllTickets, setTicketStatus } from "@/lib/tickets";
 
 export const runtime = "nodejs";
 
@@ -26,12 +26,26 @@ export async function PATCH(request: Request) {
   if (!(await isAdminRequest(request))) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
-  const body = (await request.json().catch(() => ({}))) as { id?: unknown; status?: unknown };
+  const body = (await request.json().catch(() => ({}))) as {
+    id?: unknown;
+    status?: unknown;
+    message?: unknown;
+  };
   const id = typeof body.id === "string" ? body.id : "";
-  const status = String(body.status ?? "");
-  if (!id || !["OPEN", "PENDING", "CLOSED"].includes(status)) {
+  const status = typeof body.status === "string" ? body.status : "";
+  const message = typeof body.message === "string" ? body.message.trim().slice(0, 4000) : "";
+  const validStatus = ["OPEN", "PENDING", "CLOSED"].includes(status);
+  if (!id || (!message && !validStatus)) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
-  const ticket = await setTicketStatus(id, status as TicketStatus);
-  return NextResponse.json({ ok: Boolean(ticket) });
+
+  if (message) {
+    const ticket = await getTicket(id);
+    if (!ticket) return NextResponse.json({ error: "Ticket not found." }, { status: 404 });
+    // An admin message moves the ticket to PENDING; an explicit status below wins.
+    await addTicketMessage(id, TicketAuthor.ADMIN, message);
+  }
+  if (validStatus) await setTicketStatus(id, status as TicketStatus);
+
+  return NextResponse.json({ ok: true });
 }
