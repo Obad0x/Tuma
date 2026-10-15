@@ -23,8 +23,8 @@ The contract is the source of truth. A Postgres database is optional and only ca
 | Item | Value |
 | --- | --- |
 | Network | Arc Mainnet (chain id `5042`) |
-| TumaEscrow | `<your contract address>` |
-| Deploy block | `<your deploy block>` |
+| TumaEscrow | `0xCc934ED5Ce63477de443bd07891914D50Cf4D078` |
+| Deploy block | `26010289` |
 | USDC (ERC-20, 6 decimals) | `0x3600000000000000000000000000000000000000` |
 | Explorer | https://explorer.arc.io |
 

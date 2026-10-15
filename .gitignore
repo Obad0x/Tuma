@@ -29,6 +29,9 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 
+# deployment record (contains env-specific addresses/keys)
+DEPLOYMENT.txt
+
 # local embedded postgres
 .pgdata/
 
